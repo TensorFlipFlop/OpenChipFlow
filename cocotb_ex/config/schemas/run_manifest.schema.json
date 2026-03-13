@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-chip-flow.local/schemas/run_manifest.schema.json",
+  "title": "Run Bundle Manifest",
+  "type": "object",
+  "required": ["schema_version", "run_id", "created_at", "workspace", "inputs", "derived", "outputs", "verification"],
+  "additionalProperties": true,
+  "properties": {
+    "schema_version": { "type": "string", "const": "run_manifest/v1" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "minLength": 1 },
+    "workspace": { "type": "string", "minLength": 1 },
+    "inputs": { "$ref": "#/$defs/section" },
+    "derived": { "$ref": "#/$defs/section" },
+    "outputs": { "$ref": "#/$defs/section" },
+    "verification": { "$ref": "#/$defs/section" }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["status"],
+      "additionalProperties": true,
+      "properties": {
+        "status": { "type": "string", "enum": ["copied", "missing"] },
+        "snapshot": { "type": "string" },
+        "size": { "type": "integer", "minimum": 0 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": { "const": "copied" }
+            }
+          },
+          "then": {
+            "required": ["snapshot", "size"]
+          }
+        }
+      ]
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  }
+}

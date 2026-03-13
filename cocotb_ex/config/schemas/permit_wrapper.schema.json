@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "permit_wrapper.schema.json",
+  "title": "Permit Wrapper (YAML/JSON compatible)",
+  "type": "object",
+  "required": ["sig_alg", "payload_b64", "signature_hex"],
+  "properties": {
+    "sig_alg": { "type": "string", "enum": ["HMAC-SHA256"] },
+    "payload_b64": { "type": "string", "minLength": 16 },
+    "signature_hex": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  },
+  "additionalProperties": true
+}

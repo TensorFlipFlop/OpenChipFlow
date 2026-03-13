@@ -1,0 +1,24 @@
+You are working in /work.
+The repository root is /work; do not prefix paths with "cocotb_ex/" or "/work/cocotb_ex".
+
+Review the handoff semantic review request at {semantic_review_request}.
+
+Produce:
+- Structured review JSON at {semantic_review_json}
+- Human-readable review notes at {semantic_review_md}
+- A targeted upstream repair prompt at {semantic_repair_prompt}
+
+Semantic review mode: {semantic_review_mode_value}
+
+Rules:
+- If {semantic_review_request} does not exist, write a skipped JSON result with status "skipped", a short markdown note, and a short repair prompt explaining that semantic review did not run.
+- Otherwise, read the request file carefully and judge whether the handoff content satisfies the original incremental task intent.
+- Use objective, technical language. Avoid first/second person pronouns.
+- The JSON schema_version must be "handoff_semantic_review/v1".
+- The JSON status must be one of: pass, needs_repair, skipped.
+- The JSON findings array must use concrete evidence paths and concrete suggestions.
+- The markdown review must summarize the verdict and list the main findings.
+- The repair prompt must be directly copyable by a user and should tell the upstream AI how to revise the handoff bundle without regenerating unrelated files.
+- Write only to {semantic_review_json}, {semantic_review_md}, and {semantic_repair_prompt}.
+
+Do not ask for confirmation. Do not output additional text.

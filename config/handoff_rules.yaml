@@ -1,0 +1,152 @@
+version: 1
+
+cleanroom:
+  include_files:
+    - cocotb_ex/ai_cli_pipeline/specs/out/spec.md
+    - cocotb_ex/ai_cli_pipeline/specs/out/reqs.md
+    - cocotb_ex/ai_cli_pipeline/specs/out/testplan.md
+    - cocotb_ex/rtl/ai_dut.sv
+    - cocotb_ex/tb/hdl/ai_tb_top.sv
+    - cocotb_ex/tb/ai_tb.py
+    - cocotb_ex/tests/test_ai.py
+
+  taboo_list:
+    - "Do not delete tests/assertions to force pass"
+    - "Do not weaken checks by broad skip/xfail"
+    - "Do not change unrelated files"
+
+  max_log_excerpt_lines: 160
+
+incremental_handoff:
+  target_state_default: verify_ready
+  semantic_review_mode_default: required
+
+  outputs:
+    requirements_prompt: artifacts/handoff/handoff_requirements_prompt.txt
+    source_index: artifacts/handoff/handoff_source_index.json
+    inventory: artifacts/handoff/handoff_inventory.json
+    audit: artifacts/handoff/handoff_audit.json
+    contract_audit: artifacts/handoff/handoff_contract_audit.json
+    gap_report: artifacts/handoff/handoff_gap_report.md
+    repair_prompt: artifacts/handoff/handoff_repair_prompt.txt
+    contract_repair_prompt: artifacts/handoff/handoff_contract_repair_prompt.txt
+    semantic_review_request: artifacts/handoff/handoff_semantic_review_request.md
+    semantic_review: artifacts/handoff/handoff_semantic_review.json
+    semantic_review_md: artifacts/handoff/handoff_semantic_review.md
+    semantic_repair_prompt: artifacts/handoff/handoff_semantic_repair_prompt.txt
+    acceptance: artifacts/handoff/handoff_acceptance.json
+    candidate_manifest: artifacts/handoff/handoff_manifest.candidate.json
+    materialization: artifacts/handoff/handoff_materialization.json
+    materialized_manifest: artifacts/handoff/handoff_manifest.materialized.json
+
+  source_context:
+    reference_dir_names:
+      - source_requirements
+      - original_requirements
+      - requirement_sources
+
+  required_docs:
+    verify_ready:
+      - spec
+      - reqs
+      - testplan
+      - baseline_summary
+      - compat_constraints
+      - allowlist
+
+  required_design_assets:
+    verify_ready:
+      - rtl_file
+      - rtl_filelist
+      - tb_wrapper_file
+      - tb_py_file
+      - test_file
+      - top_level
+      - test_module
+      - smoke_testcase
+
+  file_categories:
+    manifest:
+      patterns:
+        - handoff_manifest.json
+        - "*handoff*manifest*.json"
+    spec:
+      patterns:
+        - spec.md
+        - design_spec.md
+        - feature_spec.md
+    reqs:
+      patterns:
+        - reqs.md
+        - delta_spec.md
+        - "*req*.md"
+        - "*delta*.md"
+    testplan:
+      patterns:
+        - testplan.md
+        - testplan_delta.md
+        - "*testplan*.md"
+    baseline_summary:
+      patterns:
+        - baseline_summary.md
+        - "*baseline*summary*.md"
+        - "*baseline*.md"
+    compat_constraints:
+      patterns:
+        - compat_constraints.md
+        - "*compat*.md"
+        - "*constraint*.md"
+    allowlist:
+      patterns:
+        - changed_files_allowlist.yaml
+        - changed_files_allowlist.yml
+        - "*allowlist*.yaml"
+        - "*allowlist*.yml"
+
+  content_rules:
+    baseline_summary:
+      min_keyword_hits: 2
+      keywords:
+        - baseline
+        - 基线
+        - task
+        - 任务
+        - interface
+        - 接口
+        - compat
+        - 兼容
+    compat_constraints:
+      min_keyword_hits: 2
+      keywords:
+        - compat
+        - 兼容
+        - preserve
+        - 保持
+        - must
+        - 必须
+        - allow
+        - 允许
+        - forbid
+        - 不得
+    reqs:
+      min_keyword_hits: 2
+      keywords:
+        - scope
+        - 目标
+        - must
+        - 必须
+        - out of scope
+        - 不做
+        - acceptance
+        - 验收
+    testplan:
+      min_keyword_hits: 2
+      keywords:
+        - testcase
+        - TC_
+        - test
+        - 测试
+        - regression
+        - 回归
+        - check
+        - 检查

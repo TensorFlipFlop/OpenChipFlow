@@ -1,0 +1,19 @@
+{
+  "schema_version": "runner_request_manifest/v1",
+  "session_id": "example_spec_flow",
+  "mode": "spec_flow",
+  "execution": {
+    "mode": "plan",
+    "dry_run": false
+  },
+  "runtime": {
+    "model": "openai-codex/gpt-5.3-codex",
+    "variant": "medium"
+  },
+  "inputs": {
+    "spec_source": {
+      "path": "cocotb_ex/ai_cli_pipeline/examples/incremental_manifestless/spec.md",
+      "import_mode": "snapshot"
+    }
+  }
+}

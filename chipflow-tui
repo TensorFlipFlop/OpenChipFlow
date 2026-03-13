@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Compatibility layer:
+# - default: Python TUI (stable)
+# - use Go TUI via:
+#   1) CHIPFLOW_TUI_FRONTEND=go ./chipflow-tui
+#   2) ./chipflow-tui --go
+frontend="${CHIPFLOW_TUI_FRONTEND:-py}"
+
+if [[ "${1:-}" == "--go" ]]; then
+  frontend="go"
+  shift
+fi
+
+if [[ "$frontend" == "go" ]]; then
+  exec "${SCRIPT_DIR}/chipflow-tui-go" "$@"
+fi
+
+exec python3 "${SCRIPT_DIR}/scripts/chipflow_tui.py" "$@"

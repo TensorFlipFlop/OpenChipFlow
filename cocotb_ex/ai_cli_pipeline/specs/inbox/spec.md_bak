@@ -1,0 +1,146 @@
+# 模块设计规格书：基于信用的流量控制器 (Credit-Based Flow Controller)
+
+## 1. 概述 (Overview)
+
+本模块名为 `credit_flow_ctrl`。其主要功能是作为一个数据中间层，接收上游（Upstream）的数据，并根据下游（Downstream）可用的“信用值（Credit）”来决定是否发送数据。该机制用于消除长链路传输中的握手延迟气泡，确往下游发送数据时，下游一定有接收缓冲区。
+
+### 1.1 设计目标
+
+1. **数据缓冲**：内部包含一个深度为 16 的同步 FIFO，用于暂存上游数据。
+2. **信用管理**：维护一个内部信用计数器（Credit Counter）。
+* 初始值为参数 `MAX_CREDIT`。
+* 每发送一个数据给下游，信用值减 1。
+* 每收到下游的一个信用归还信号，信用值加 1。
+* 当信用值为 0 时，停止向下游发送数据（即使 FIFO 中有数据）。
+
+
+
+---
+
+## 2. 接口定义 (Interface Definition)
+
+### 2.1 全局信号
+
+| 信号名 | 方向 | 位宽 | 描述 |
+| --- | --- | --- | --- |
+| `clk` | Input | 1 | 系统时钟，上升沿有效。 |
+| `rst_n` | Input | 1 | 异步复位，低电平有效。复位时清空 FIFO 和重置信用计数器。 |
+
+### 2.2 上游接口 (Slave Interface)
+
+遵循类 AXI-Stream 的 Valid/Ready 握手协议。
+| 信号名 | 方向 | 位宽 | 描述 |
+| :--- | :--- | :--- | :--- |
+| `slv_valid` | Input | 1 | 上游数据有效指示。 |
+| `slv_data` | Input | 32 | 上游输入数据。 |
+| `slv_ready` | Output | 1 | 反压信号。当内部 FIFO 未满时为高，指示可接收数据。 |
+
+### 2.3 下游接口 (Master Interface)
+
+**注意**：下游接口**没有** Ready 信号，发送权完全由信用值决定。
+| 信号名 | 方向 | 位宽 | 描述 |
+| :--- | :--- | :--- | :--- |
+| `mst_valid` | Output | 1 | 下游数据输出有效。 |
+| `mst_data` | Output | 32 | 下游输出数据。 |
+
+### 2.4 信用控制接口 (Credit Interface)
+
+| 信号名 | 方向 | 位宽 | 描述 |
+| --- | --- | --- | --- |
+| `crd_return` | Input | 1 | 下游信用归还脉冲。高电平有效，表示下游释放了一个接收槽位。 |
+| `crd_error` | Output | 1 | 错误指示。当信用计数器溢出或发生非法逻辑时拉高。 |
+
+### 2.5 参数 (Parameters)
+
+| 参数名 | 默认值 | 描述 |
+| --- | --- | --- |
+| `MAX_CREDIT` | 8 | 下游初始可用的接收缓冲区数量（最大信用值）。 |
+| `FIFO_DEPTH` | 16 | 内部数据缓冲 FIFO 的深度。 |
+
+---
+
+## 3. 功能详述 (Functional Description)
+
+### 3.1 FIFO 行为
+
+* **写入**：当 `slv_valid` 为高且 `slv_ready` 为高时，数据写入 FIFO。
+* **读取**：当 FIFO 非空且 `current_credit > 0` 时，从 FIFO 读出数据发送给下游。
+* **Full/Empty**：
+* `slv_ready` 逻辑应为 `!fifo_full`。
+* 复位时，FIFO 指针归零。
+
+
+
+### 3.2 信用计数器 (Credit Counter) 逻辑
+
+定义一个内部寄存器 `reg [CW-1:0] credit_cnt`（位宽根据 `MAX_CREDIT` 自动计算）。
+
+1. **复位**：`credit_cnt` 被置为 `MAX_CREDIT`。
+2. **递减 (Decrement)**：当发生一次成功的下游发送 (`mst_valid == 1`) 时，`credit_cnt` 减 1。
+3. **递增 (Increment)**：当收到 `crd_return == 1` 时，`credit_cnt` 加 1。
+4. **同时发生**：如果同一时钟周期内既发送了数据又收到了信用归还，`credit_cnt` 保持不变。
+
+### 3.3 发送逻辑
+
+* `mst_valid` 拉高的条件：`(FIFO not empty) && (credit_cnt > 0)`。
+* `mst_data` 应与 `mst_valid` 对齐输出。
+
+---
+
+## 4. 时序与协议约束 (Timing & Protocol Constraints)
+
+1. **复位恢复**：复位释放后的第一个周期，`credit_cnt` 必须立即可用（等于 `MAX_CREDIT`），`slv_ready` 必须根据 FIFO 状态正确置位。
+2. **Credit 返回延迟**：设计不应假设 `crd_return` 的延迟，它可能在发送数据后的任意周期返回。
+3. **背对背传输**：如果 `credit_cnt` 充足且 FIFO 有数据，模块必须支持每个时钟周期发送一个数据（Full Throughput）。
+4. **组合逻辑环路**：设计中严禁出现组合逻辑环路（Combinational Loops）。`slv_ready` 的生成建议直接来自于寄存器状态（如 FIFO full 标志），避免对 `slv_valid` 的直接组合逻辑依赖。
+
+---
+
+## 5. 验证需求 (Verification Requirements)
+
+为了验证 AI 生成的代码是否健壮，验证环境（Testbench）必须包含以下检查点。请在你的 AI 提示词中要求生成对应的 SVA (SystemVerilog Assertion)。
+
+### 5.1 必须实现的断言 (Assertions)
+
+1. **信用下溢检查 (Credit Underflow)**:
+* 断言 `credit_cnt` 永远不会小于 0。
+* *SVA思路*: `assert property (@(posedge clk) credit_cnt >= 0);`
+
+
+2. **信用上溢检查 (Credit Overflow)**:
+* 断言 `credit_cnt` 永远不会大于 `MAX_CREDIT`。
+* **注意**：这就隐含了一个前提，验证环境（Testbench）模拟下游时，返回的 `crd_return` 总数不能超过接收到的数据总数，否则是 TB 的错误。但如果 TB 行为正确，DUT 计数错误，则此断言触发。
+
+
+3. **FIFO 状态检查**:
+* 当 `fifo_full` 为真时，不应再发生写入操作（假设 `slv_ready` 正确工作，上游遵守协议）。
+* 当 `fifo_empty` 为真时，`mst_valid` 必须为 0。
+
+
+4. **数据完整性检查 (Scoreboard)**:
+* 验证环境需维护一个 Scoreboard，确保输入的数据序列与输出的数据序列完全一致（数据值、顺序）。
+
+
+5. **X态检查**:
+* `slv_ready`, `mst_valid`, `crd_error` 永远不能为 X (Unknown)。
+
+
+
+### 5.2 覆盖率需求 (Coverage Goals)
+
+1. **FIFO 水位覆盖率**:
+* FIFO Empty
+* FIFO Full
+* FIFO Half Full
+
+
+2. **信用水位覆盖率**:
+* Credit = 0 (反压触发点)
+* Credit = MAX_CREDIT (空闲状态)
+* Credit 跳变 (0 -> 1, MAX -> MAX-1)
+
+
+3. **交互场景**:
+* **Case 1**: 信用耗尽，FIFO 填满（测试上游反压）。
+* **Case 2**: 信用充足，数据流经（测试最大带宽）。
+* **Case 3**: 信用逐渐归还（测试从阻塞到恢复的过程）。

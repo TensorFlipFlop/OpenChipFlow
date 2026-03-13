@@ -1,0 +1,60 @@
+{
+  "catalog_version": "1.1",
+  "categories": {
+    "ENV_ERROR": "Infrastructure, toolchain, or resource issues.",
+    "MODEL_ERROR": "AI model hallucination, refusal, or invalid format.",
+    "SCRIPT_ERROR": "Bugs in the RTL, testbench, or automation scripts.",
+    "GATE_ERROR": "Quality gate failure (coverage, lint, assertions)."
+  },
+  "errors": [
+    {
+      "code": "ERR_SIM_TIMEOUT",
+      "category": "ENV_ERROR",
+      "pattern": "TimeoutError|SimTimeout|Simulator timed out",
+      "description": "Simulation exceeded the maximum allowed time.",
+      "suggested_action": "Check for infinite loops in testbench or increase timeout value in Makefile/config."
+    },
+    {
+      "code": "ERR_COMPILATION_FAIL",
+      "category": "SCRIPT_ERROR",
+      "pattern": "Error: syntax error|Error: module .* not found|verilator: Bad option",
+      "description": "RTL or Testbench compilation failed.",
+      "suggested_action": "Check syntax, missing includes, or file paths in filelist.f."
+    },
+    {
+      "code": "ERR_ASSERTION_FAIL",
+      "category": "GATE_ERROR",
+      "pattern": "Assertion failed|Error: Assertion error",
+      "description": "SystemVerilog assertion fired during simulation.",
+      "suggested_action": "Review the waveform around the assertion timestamp. Check reset logic or signal stability."
+    },
+    {
+      "code": "ERR_PYTHON_EXCEPTION",
+      "category": "SCRIPT_ERROR",
+      "pattern": "Traceback (most recent call last)|ModuleNotFoundError|ImportError",
+      "description": "Python script crash.",
+      "suggested_action": "Check python dependencies, PYTHONPATH, or script syntax."
+    },
+    {
+      "code": "ERR_FILE_NOT_FOUND",
+      "category": "ENV_ERROR",
+      "pattern": "No such file or directory",
+      "description": "Missing input file or directory.",
+      "suggested_action": "Verify input paths and upstream stage artifact generation."
+    },
+    {
+      "code": "ERR_MODEL_REFUSAL",
+      "category": "MODEL_ERROR",
+      "pattern": "I cannot fulfill this request|I'm sorry, but I can't|content_filter_detected",
+      "description": "Model refused to generate code.",
+      "suggested_action": "Refine the prompt to be more specific or check safety settings."
+    },
+    {
+      "code": "ERR_MODEL_FORMAT",
+      "category": "MODEL_ERROR",
+      "pattern": "JSONDecodeError|Expecting value|Invalid JSON",
+      "description": "Model output invalid JSON or format.",
+      "suggested_action": "Check if model output is truncated or mixed with markdown."
+    }
+  ]
+}

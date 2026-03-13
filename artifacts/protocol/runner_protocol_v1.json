@@ -1,0 +1,166 @@
+{
+  "version": "v1",
+  "transport": {
+    "mode": "subprocess",
+    "stdin": "optional",
+    "stdout": "json|jsonl",
+    "stderr": "human-readable"
+  },
+  "exit_codes": {
+    "0": "ok",
+    "2": "config_error",
+    "3": "stage_not_found",
+    "4": "command_fail_or_quota_block",
+    "130": "interrupted"
+  },
+  "schemas": {
+    "request_manifest": "config/schemas/runner_request_manifest.schema.json",
+    "ui_manifest": "config/schemas/runner_ui_manifest.schema.json"
+  },
+  "commands": {
+    "list": {
+      "args": [],
+      "response": {
+        "ok": "boolean",
+        "flows": "array",
+        "stages": "array"
+      }
+    },
+    "run": {
+      "args": ["target", "dry_run", "request_manifest", "model", "variant", "thinking"],
+      "response": {
+        "ok": "boolean",
+        "run_id": "string",
+        "session_id": "string",
+        "manifest": "string",
+        "rc": "number"
+      }
+    },
+    "stage": {
+      "args": ["name", "dry_run", "request_manifest", "model", "variant", "thinking"],
+      "response": {
+        "ok": "boolean",
+        "run_id": "string",
+        "session_id": "string",
+        "manifest": "string",
+        "rc": "number"
+      }
+    },
+    "doctor": {
+      "args": ["dry_run", "request_manifest", "model", "variant", "thinking"],
+      "response": {
+        "ok": "boolean",
+        "run_id": "string",
+        "session_id": "string",
+        "manifest": "string",
+        "rc": "number"
+      }
+    },
+    "request": {
+      "args": ["request_manifest", "dry_run", "model", "variant", "thinking"],
+      "response": {
+        "ok": "boolean",
+        "run_id": "string",
+        "session_id": "string",
+        "manifest": "string",
+        "rc": "number"
+      }
+    },
+    "stop": {
+      "args": ["run_id"],
+      "response": {
+        "ok": "boolean"
+      }
+    },
+    "status": {
+      "args": ["run_id"],
+      "response": {
+        "ok": "boolean",
+        "running": "boolean",
+        "last_run": "object"
+      }
+    },
+    "log": {
+      "args": ["run_id", "stage", "tail"],
+      "response": {
+        "ok": "boolean",
+        "lines": "array"
+      }
+    }
+  },
+  "request_manifest": {
+    "schema_version": "runner_request_manifest/v1",
+    "modes": {
+      "spec_flow": {
+        "required_inputs": ["spec_source"],
+        "optional_inputs": [],
+        "supported_import_modes": ["reference", "snapshot"],
+        "execution": "run plan|all",
+        "notes": [
+          "execution.mode selects real flow depth",
+          "dry_run is controlled separately by execution.dry_run or CLI --dry-run"
+        ]
+      },
+      "handoff_intake": {
+        "required_inputs": ["handoff_root|handoff_manifest"],
+        "optional_inputs": ["target_state"],
+        "supported_import_modes": ["reference", "snapshot"],
+        "execution": "run handoff_intake",
+        "notes": [
+          "dry_run is controlled separately by execution.dry_run or CLI --dry-run"
+        ]
+      },
+      "incremental_verify_ready": {
+        "required_inputs": ["handoff_manifest"],
+        "optional_inputs": ["backend_policy"],
+        "supported_import_modes": ["reference", "snapshot"],
+        "execution": "run incremental_verify_ready",
+        "notes": [
+          "dry_run is controlled separately by execution.dry_run or CLI --dry-run"
+        ]
+      }
+    }
+  },
+  "ui_manifest": {
+    "schema_version": "runner_ui_manifest/v1",
+    "required_fields": [
+      "run_id",
+      "session_id",
+      "mode",
+      "request_manifest",
+      "request_artifacts",
+      "input_artifacts",
+      "primary_artifacts",
+      "secondary_artifacts",
+      "log_files",
+      "next_actions"
+    ]
+  },
+  "event_stream": {
+    "flag": "--event-stream jsonl",
+    "types": [
+      "run_started",
+      "stage_started",
+      "cmd_started",
+      "cmd_finished",
+      "stage_finished",
+      "run_finished"
+    ],
+    "fields": [
+      "type",
+      "ts",
+      "run_id",
+      "session_id",
+      "command",
+      "effective_command",
+      "target",
+      "mode",
+      "stage",
+      "name",
+      "cmd",
+      "rc",
+      "duration_s",
+      "dry_run"
+    ]
+  }
+}

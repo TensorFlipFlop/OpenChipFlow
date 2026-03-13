@@ -1,0 +1,19 @@
+version: 1
+
+policy:
+  sticky_classes:
+    - SYNTAX
+    - LINT
+
+  escalate_classes:
+    - LOGIC
+    - RUNTIME
+
+  infra_classes:
+    - INFRA
+
+  logic_escalate_after: 2
+  runtime_escalate_after: 2
+
+state:
+  path: artifacts/sticky/state.json

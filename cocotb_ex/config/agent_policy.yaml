@@ -1,0 +1,177 @@
+version: 1
+policy_id: chipflow-professional-agent-v1
+owner: Chao
+last_updated: 2026-02-18
+
+# 目标：把专用 agent 运行从“可用”提升到“可治理”。
+# 原则：领域专用（强约束）+ 平台通用（可演进）。
+
+scope:
+  project_root: cocotb_ex
+  workflows:
+    - implement
+    - plan
+
+principles:
+  - evidence_first
+  - fail_closed
+  - must_call_tools
+  - output_contract_first
+  - deterministic_replay
+  - hitl_for_high_risk
+
+layers:
+  L0_control_plane:
+    responsibility:
+      - session
+      - routing
+      - timeout_retry
+      - policy_enforcement
+      - audit_logging
+  L1_domain_orchestration:
+    responsibility:
+      - workflow_state_machine
+      - role_order
+      - gate_binding
+  L2_tool_execution:
+    responsibility:
+      - rtl_tb_test_generation
+      - trace_matrix_generation
+      - simulation_and_regression
+  L3_evidence_plane:
+    responsibility:
+      - trace_matrix
+      - verify_report
+      - run_bundle
+      - manifest
+
+must_call:
+  implement:
+    required_roles_in_order:
+      - de_agent
+      - dv_agent
+      - code_formatter
+      - case_schedule_builder
+      - testcase_validator
+      - trace_matrix_builder
+      - trace_matrix_gate
+      - run_bundle_snapshot
+      - sim_runner
+      - verifier
+      - regress_runner
+    fail_if_missing: true
+
+output_contract:
+  required_files:
+    - path: ai_cli_pipeline/specs/out/spec.md
+      owner_role: spec_refiner
+      type: markdown
+    - path: ai_cli_pipeline/specs/out/reqs.md
+      owner_role: req_testplan_generator
+      type: markdown
+    - path: ai_cli_pipeline/specs/out/testplan.md
+      owner_role: req_testplan_generator
+      type: markdown
+    - path: ai_cli_pipeline/verification/req_trace_matrix.json
+      owner_role: trace_matrix_builder
+      type: json
+    - path: ai_cli_pipeline/verification/req_trace_matrix.md
+      owner_role: trace_matrix_builder
+      type: markdown
+    - path: artifacts/runs/{run_id}/manifest.json
+      owner_role: run_bundle_snapshot
+      type: json
+  fail_if_any_missing: true
+
+schema_contracts:
+  - name: req_trace_matrix_json
+    file: ai_cli_pipeline/verification/req_trace_matrix.json
+    required_top_level_keys:
+      - summary
+      - requirements
+    required_summary_keys:
+      - requirements
+      - ok
+      - no_testplan
+      - missing_test_impl
+      - no_signal_link
+  - name: run_bundle_manifest
+    file: artifacts/runs/{run_id}/manifest.json
+    required_top_level_keys:
+      - run_id
+      - created_at
+      - inputs
+      - derived
+      - outputs
+      - verification
+
+gates:
+  traceability_gate:
+    command: >-
+      python3 tools/trace_matrix_gate.py
+      --input ai_cli_pipeline/verification/req_trace_matrix.json
+      --max-no-testplan 0
+      --max-missing-test-impl 0
+      --max-no-signal-link 0
+    thresholds:
+      no_testplan: 0
+      missing_test_impl: 0
+      no_signal_link: 0
+      non_ok_requirements: 0
+    fail_closed: true
+
+  schema_gate:
+    enabled: false
+    note: "下一阶段启用（配合 JSON schema 校验脚本）"
+
+failure_escalation:
+  fix_loop:
+    max_attempts: 3
+    on_exceeded:
+      action: require_human_approval
+      create_packet: true
+      packet_fields:
+        - run_id
+        - failing_stage
+        - last_error_excerpt
+        - changed_files
+        - suggested_options
+
+hitl:
+  required_approvals:
+    - id: relax_gate_threshold
+      reason: "任何门禁阈值放宽"
+    - id: weaken_verification_standard
+      reason: "修改断言/skip/xfail 等验证标准"
+    - id: merge_with_known_failures
+      reason: "带已知失败继续推进"
+  approval_log:
+    file: artifacts/approvals/approval_log.jsonl
+    required_fields:
+      - approval_id
+      - approver
+      - reason
+      - run_id
+      - timestamp
+
+tool_policy:
+  deny:
+    - delete_artifacts_without_backup
+    - silent_test_removal
+    - gate_bypass
+  require_explicit_evidence_for:
+    - testcase_change
+    - rtl_change
+    - gate_threshold_change
+
+reporting:
+  professional_exit_rules:
+    must_include:
+      - what_changed
+      - gate_status
+      - evidence_paths
+      - residual_risks
+      - next_actions
+    disallow:
+      - unsupported_success_claim
+      - no_evidence_pass_claim

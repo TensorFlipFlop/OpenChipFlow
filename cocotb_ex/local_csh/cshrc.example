@@ -1,0 +1,49 @@
+# ~/.cshrc example (csh/tcsh)
+#
+# Goal:
+# - Port common customizations from ~/.bashrc into csh/tcsh
+# - Keep secrets out of this file (use ~/.cshrc_secrets)
+#
+
+if ( $?prompt ) then
+  # Prefer local user bins
+  if ( -d "$HOME/.local/bin" ) then
+    setenv PATH "$HOME/.local/bin:$PATH"
+  endif
+
+  # Node (ported from bashrc; adjust version/path if needed)
+  if ( -d "$HOME/.nvm/versions/node/v22.20.0/bin" ) then
+    # NOTE(csh/tcsh): use ${PATH} to avoid "$PATH:..." being parsed as a ":" modifier.
+    setenv PATH "${PATH}:$HOME/.nvm/versions/node/v22.20.0/bin"
+  endif
+
+  # Local python312 toolchain in this repo (optional)
+  if ( -d "$HOME/work/verilog_sim_template/tools/python312/bin" ) then
+    setenv PATH "$HOME/work/verilog_sim_template/tools/python312/bin:$PATH"
+  endif
+
+  # Prompt (tcsh uses $prompt; bash uses PS1)
+  # - Green user@host, blue cwd, and ">" / "#" prompt char.
+  set prompt = "%{\033[01;32m%}%n@%m%{\033[0m%}:%{\033[01;34m%}%~%{\033[0m%}%# "
+
+  # Auto-list directory contents after each successful cd
+  alias cd 'cd \!*; if ( $status == 0 ) ls'
+
+  # Shorthand cd commands for moving up directories (supports up to five levels)
+  alias .     'cd ..'
+  alias ..    'cd ../..'
+  alias ...   'cd ../../..'
+  alias ....  'cd ../../../..'
+  alias ..... 'cd ../../../../..'
+
+  # Quick edit/source helpers for this cshrc
+  alias crc 'code ~/.cshrc'
+  # If you don't have VS Code CLI, change to: alias crc 'vi ~/.cshrc'
+  alias src 'source ~/.cshrc'
+
+  # grep helper
+  alias gp 'grep -nr --color=always'
+
+  # Secrets (do NOT commit): put "setenv XXX ..." lines in ~/.cshrc_secrets
+  if ( -f "$HOME/.cshrc_secrets" ) source "$HOME/.cshrc_secrets"
+endif

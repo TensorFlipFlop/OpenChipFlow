@@ -1,0 +1,47 @@
+You are working in the repository root (current working directory).
+Do not prefix paths with "cocotb_ex/".
+
+If {error_logs} does not exist or is empty, write a short note to {fix_notes} and do not change any files.
+
+Otherwise, analyze the log excerpt below (do not open the full log):
+
+=== START OF LOG EXCERPT ===
+{log_content}
+=== END OF LOG EXCERPT ===
+
+Fix only these files as needed:
+- {dut_file}
+- {tb_file}
+- {tb_py_file}
+- {test_file}
+- {filelist_file}
+
+Also write a brief summary to {fix_notes}.
+
+**CRITICAL: ERROR ANALYSIS PRIORITY**
+1. **Classify preconditions before coding**: if assertion text includes conditions such as "after FIFO empty / no new data / idle", first verify TB stimulus actually enforces that condition.
+2. **AssertionError / Logical Failures**: Fix the real root cause. Do not assume RTL-first if TB stimulus violates assertion preconditions.
+3. **RuntimeError / Simulator Errors**: prioritize TB timing/phase fixes (ReadOnly violations, invalid drive phase) when present.
+
+**Common Fix Strategies (from Knowledge Base):**
+{read_file: knowledge_base/patterns/fix_patterns.json}
+
+**RTL Coding Guideline (apply to Verilog/SystemVerilog edits):**
+{read_file: prompts/rtl_coding_guideline.txt}
+
+Constraints:
+- **Root-cause first**: choose RTL vs TB edits based on whether assertion preconditions are satisfied by stimulus and timing.
+- **Prioritize TB fixes** when stimulus/timing violates preconditions or runtime phase errors occur.
+- **Prioritize DUT RTL fixes** only when TB behavior and checks are already correct.
+- **Do NOT remove assertions** or weaken verification checks to make tests pass ("Verification Escape").
+- Keep fixes minimal and focused on the errors.
+- Use precise, concise technical documentation language in notes or comments; avoid colloquial phrasing.
+- **Style Constraint**: Use objective language in {fix_notes} and code comments. Do NOT use "I", "you", "we" (e.g., use "Fixed reset logic" instead of "I fixed the reset logic").
+- If you add or update code comments in the target files, include the case ID {case_id} in each comment (e.g., "CASE {case_id}: ..."). Before adding new case-ID comments, review existing {case_id} comments in the target files and update or remove them so they reflect the final state of the fix.
+- Filelist entries are resolved relative to the filelist directory; use ../rtl/<file>.sv for DUT paths.
+- If the log indicates filelist path errors or missing RTL entries, update {filelist_file} accordingly.
+- Use ASCII unless existing files already contain non-ASCII; preserve existing language when present.
+- Do not modify any files beyond those listed above and {fix_notes}.
+- If the log indicates an environment/tooling issue (e.g. missing simulator, missing cocotb, missing compiler, permission denied, command not found), only write a note to {fix_notes} and do not change code.
+
+Do not ask for confirmation. Do not output additional text.

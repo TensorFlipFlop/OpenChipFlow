@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Artifact Handoff Manifest",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "case_id",
+    "delivery_state",
+    "docs",
+    "design_assets",
+    "change_scope",
+    "verification"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "artifact_handoff_manifest/v1"
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "delivery_state": {
+      "type": "string",
+      "enum": [
+        "analysis_only",
+        "design_ready",
+        "verify_ready"
+      ]
+    },
+    "docs": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "spec_file",
+        "reqs_file",
+        "testplan_file",
+        "baseline_summary_file",
+        "compat_constraints_file"
+      ],
+      "properties": {
+        "spec_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reqs_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "testplan_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baseline_summary_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compat_constraints_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "allowlist_file": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "design_assets": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "rtl_file",
+        "rtl_filelist",
+        "tb_wrapper_file",
+        "tb_py_file",
+        "test_file",
+        "top_level",
+        "test_module"
+      ],
+      "properties": {
+        "rtl_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rtl_filelist": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tb_wrapper_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tb_py_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "test_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "top_level": {
+          "type": "string",
+          "minLength": 1
+        },
+        "test_module": {
+          "type": "string",
+          "minLength": 1
+        },
+        "smoke_testcase": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "change_scope": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "allowed_modify",
+        "allowed_create",
+        "forbidden_actions"
+      ],
+      "properties": {
+        "allowed_modify": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "object",
+                "additionalProperties": true,
+                "required": [
+                  "path"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "allowed_create": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "object",
+                "additionalProperties": true,
+                "required": [
+                  "path"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "forbidden_actions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "backends"
+      ],
+      "properties": {
+        "backends": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "verilator",
+                  "vcs",
+                  "cocotb"
+                ]
+              },
+              {
+                "type": "object",
+                "additionalProperties": true,
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "enum": [
+                      "verilator",
+                      "vcs",
+                      "cocotb"
+                    ]
+                  },
+                  "purpose": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "smoke_testcase": {
+          "type": "string",
+          "minLength": 1
+        },
+        "regression_modules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "source_context": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "reference_docs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "semantic_review_mode": {
+          "type": "string",
+          "enum": [
+            "off",
+            "auto",
+            "required"
+          ]
+        }
+      }
+    }
+  }
+}

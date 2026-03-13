@@ -1,0 +1,62 @@
+version: 2
+
+job_role_map:
+  SPEC_PARSE: "Verifier"
+  TESTPLAN_GEN: "Verifier"
+  CODEGEN_DUT: "Designer"
+  CODEGEN_TB: "Verifier"
+  TRIAGE: "Verifier"
+  FIX_PATCH: "Designer"
+  REFEREE_DECISION: "Referee"
+  PR_WRITEUP: "PRWriter"
+
+error_classes:
+  SYNTAX:
+    examples: ["verible syntax", "parse error", "unexpected token"]
+  LINT:
+    examples: ["verible lint", "style", "unused", "width mismatch lint"]
+  LOGIC:
+    examples: ["assertion failed", "scoreboard mismatch", "expected vs actual", "timeout waiting"]
+  INFRA:
+    examples: ["driver not started", "clock not running", "reset not deasserted"]
+  FLAKY:
+    examples: ["seed dependent", "nondeterministic", "race condition"]
+
+stickiness:
+  enabled: true
+  scope: "per_case"
+  cache_key_fields: ["case_id", "job_type", "role"]
+  in_place_fix_classes:
+    - "SYNTAX"
+    - "LINT"
+  in_place_fix_behavior:
+    force_same_model: true
+    do_not_increment_logic_failures: true
+    do_not_trigger_escalation: true
+
+escalation:
+  logic_error_threshold: 2
+  max_total_attempts_per_case: 5
+  force_escalate_when:
+    tb3_touched: true
+    blast_radius_files_ge: 5
+    blast_radius_loc_ge: 200
+  escalation_target_role: "Referee"
+
+fallback:
+  if_tier_budget_exceeded:
+    T2: "T1"
+    T1: "T0"
+
+cleanroom_handover:
+  enabled: true
+  packet_path: "artifacts/handoff/escalation_packet.json"
+  discard_dialog_history: true
+  include:
+    - "spec_ir"
+    - "project_pack"
+    - "repo_state"
+    - "code_snapshot"
+    - "error_summary"
+    - "repro_cmd"
+    - "taboo_list"

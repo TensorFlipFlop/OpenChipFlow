@@ -1,0 +1,46 @@
+{
+  "workflows": {
+    "implement": {
+      "must_call_roles": [
+        "trace_matrix_builder",
+        "trace_matrix_schema_gate",
+        "trace_matrix_gate",
+        "run_bundle_snapshot",
+        "run_manifest_schema_gate",
+        "sim_runner",
+        "verifier",
+        "regress_runner"
+      ],
+      "required_artifacts": [
+        "ai_cli_pipeline/verification/req_trace_matrix.md",
+        "ai_cli_pipeline/verification/req_trace_matrix.json",
+        "artifacts/runs/{timestamp}/manifest.json",
+        "ai_cli_pipeline/verification/verify.md"
+      ]
+    },
+    "incremental_verify_ready": {
+      "must_call_roles": [
+        "handoff_manifest_schema_gate",
+        "handoff_context_builder",
+        "case_schedule_builder",
+        "testcase_validator",
+        "trace_matrix_builder",
+        "trace_matrix_schema_gate",
+        "trace_matrix_gate",
+        "run_bundle_snapshot",
+        "run_manifest_schema_gate",
+        "incremental_sim_runner",
+        "verifier",
+        "regress_runner",
+        "incremental_compliance_gate"
+      ],
+      "required_artifacts": [
+        "artifacts/handoff/handoff_context.json",
+        "ai_cli_pipeline/verification/req_trace_matrix.md",
+        "ai_cli_pipeline/verification/req_trace_matrix.json",
+        "artifacts/runs/{timestamp}/manifest.json",
+        "ai_cli_pipeline/verification/verify.md"
+      ]
+    }
+  }
+}

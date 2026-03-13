@@ -1,0 +1,2 @@
+This role runs verible-verilog-format on the host.
+No prompt is sent to stdin.

@@ -1,0 +1,17 @@
+sim_build/
+out/
+simv*
+csrc/
+*.fsdb
+*.vcd
+*.vpd
+*.log
+ucli.key
+verdiLog*/
+coverage.yml
+results.xml
+cm.vdb/
+cov_html/
+regression_out/
+doctor*.log
+doctor*.txt

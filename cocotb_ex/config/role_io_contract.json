@@ -1,0 +1,76 @@
+{
+  "schema_version": "role_io_contract/v1",
+  "roles": {
+    "Designer": {
+      "inputs": [
+        "spec/*.md",
+        "rtl/*.v"
+      ],
+      "outputs": [
+        {
+          "pattern": "rtl/*.v",
+          "description": "Verilog RTL source code"
+        },
+        {
+          "pattern": "logs/design_change_summary.json",
+          "description": "Machine-readable summary of design changes",
+          "required": true
+        }
+      ]
+    },
+    "Verifier": {
+      "inputs": [
+        "rtl/*.v",
+        "tb/*.py",
+        "tests/*.py"
+      ],
+      "outputs": [
+        {
+          "pattern": "tb/*.py",
+          "description": "Cocotb testbench code"
+        },
+        {
+          "pattern": "tests/*.py",
+          "description": "Test cases"
+        },
+        {
+          "pattern": "logs/test_plan_update.json",
+          "description": "Machine-readable test plan modifications",
+          "required": true
+        }
+      ]
+    },
+    "Referee": {
+      "inputs": [
+        "logs/design_change_summary.json",
+        "logs/test_plan_update.json",
+        "sim_results/*.xml"
+      ],
+      "outputs": [
+        {
+          "pattern": "logs/referee_decision.json",
+          "description": "Structured decision packet (pass/fail/escalate)",
+          "required": true
+        }
+      ]
+    },
+    "SimRunner": {
+      "inputs": [
+        "rtl/*.v",
+        "tb/*.py"
+      ],
+      "outputs": [
+        {
+          "pattern": "sim_build/results.xml",
+          "description": "JUnit XML simulation results",
+          "required": true
+        },
+        {
+          "pattern": "logs/sim_status.json",
+          "description": "Simulation exit status and metrics",
+          "required": true
+        }
+      ]
+    }
+  }
+}

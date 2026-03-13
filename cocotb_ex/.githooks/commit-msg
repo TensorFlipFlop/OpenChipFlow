@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MSG_FILE="${1:-}"
+if [[ -z "${MSG_FILE}" || ! -f "${MSG_FILE}" ]]; then
+  echo "[commit-msg] ERROR: commit message file not provided or not found."
+  exit 1
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "${REPO_ROOT}"
+
+TB_ROOT="cocotb_ex/tb"
+CURRENT_CASE_FILE="cocotb_ex/artifacts/.current_case"
+CURRENT_PERMIT_ID_FILE="cocotb_ex/artifacts/.current_permit_id"
+PERMIT_DIR="cocotb_ex/artifacts/referee/permits"
+
+TB3_PATTERNS=(
+  "${TB_ROOT}/*score*"
+  "${TB_ROOT}/*assert*"
+  "${TB_ROOT}/*check*"
+  "${TB_ROOT}/*ref*"
+  "${TB_ROOT}/*golden*"
+)
+
+is_tb3_file() {
+  local f="$1"
+  for pat in "${TB3_PATTERNS[@]}"; do
+    if [[ "$f" == $pat ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Enforce case tag: [case:...]
+if ! grep -qE '\[case:[a-zA-Z0-9_.-]+\]' "${MSG_FILE}"; then
+  echo "[commit-msg] ERROR: Missing required case tag format: [case:CASE_ID]"
+  echo "  Please include it anywhere in the commit message (e.g., [case:${CASE_ID}])."
+  exit 1
+fi
+
+mapfile -t STAGED_FILES < <(git diff --cached --name-only --diff-filter=ACMR)
+TB3_TOUCHED=0
+for f in "${STAGED_FILES[@]}"; do
+  if is_tb3_file "$f"; then
+    TB3_TOUCHED=1
+    break
+  fi
+done
+
+if [[ "${TB3_TOUCHED}" -eq 1 ]]; then
+  if ! grep -qE '(^|[[:space:]])REFEREE-APPROVED($|[[:space:]])' "${MSG_FILE}"; then
+    echo "[commit-msg] ERROR: TB-3 touched; commit message must include 'REFEREE-APPROVED'."
+    exit 1
+  fi
+
+  PERMIT_ID=""
+  if [[ -f "${CURRENT_PERMIT_ID_FILE}" ]]; then
+    PERMIT_ID="$(tr -d ' \n\r\t' < "${CURRENT_PERMIT_ID_FILE}")"
+  fi
+
+  PERMIT_FILE="${PERMIT_DIR}/${CASE_ID}.permit.yaml"
+  if [[ -z "${PERMIT_ID}" && -f "${PERMIT_FILE}" ]]; then
+    PERMIT_ID="$(python3 - <<'PY' "${PERMIT_FILE}" 2>/dev/null || true
+import base64
+import json
+import re
+import sys
+
+p = open(sys.argv[1], "r", encoding="utf-8").read().splitlines()
+payload_b64 = ""
+for line in p:
+  m = re.match(r'^payload_b64:\s*"?(.+?)"?\s*$', line)
+  if m:
+    payload_b64 = m.group(1).strip()
+    break
+if not payload_b64:
+  sys.exit(0)
+try:
+  payload = base64.b64decode(payload_b64).decode("utf-8", "ignore")
+  j = json.loads(payload)
+  print(j.get("permit_id", ""))
+except Exception:
+  sys.exit(0)
+PY
+)"
+  fi
+
+  if [[ -n "${PERMIT_ID}" ]]; then
+    PERMIT_TAG="[permit:${PERMIT_ID}]"
+    if ! grep -qF "${PERMIT_TAG}" "${MSG_FILE}"; then
+      echo "[commit-msg] ERROR: TB-3 touched; permit_id is available but missing tag: ${PERMIT_TAG}"
+      echo "  Add it to the commit message for traceability."
+      exit 1
+    fi
+  else
+    echo "[commit-msg] WARN: TB-3 touched; permit_id tag not enforced (not available)."
+  fi
+fi
+
+TITLE="$(head -n 1 "${MSG_FILE}")"
+if [[ "${#TITLE}" -gt 120 ]]; then
+  echo "[commit-msg] ERROR: Commit title too long (>120 chars)."
+  exit 1
+fi
+
+exit 0

@@ -1,0 +1,40 @@
+name: Traceability Gate
+
+on:
+  push:
+    paths:
+      - 'cocotb_ex/**'
+      - 'tools/**'
+      - 'Makefile'
+      - '.github/workflows/traceability-gate.yml'
+  pull_request:
+    paths:
+      - 'cocotb_ex/**'
+      - 'tools/**'
+      - 'Makefile'
+      - '.github/workflows/traceability-gate.yml'
+
+jobs:
+  traceability-gate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate trace matrix
+        run: make trace-matrix
+
+      - name: Enforce trace gate
+        run: make trace-gate
+
+      - name: Materialize run bundle (for schema gate)
+        run: make run-bundle RUN_ID=ci_schema_check
+
+      - name: Enforce schema gate
+        run: make schema-gate RUN_ID=ci_schema_check

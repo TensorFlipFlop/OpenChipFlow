@@ -1,0 +1,73 @@
+version: 1
+
+common:
+  commands:
+    - make
+    - git
+    - python3
+    - verilator
+    - verible-verilog-format
+    - codex
+    - gemini
+    - opencode
+  python_modules:
+    - cocotb
+    - cocotb_bus
+    - pytest
+
+workflows:
+  plan:
+    checks:
+      - name: codex_auth
+        type: any_path_exists
+        paths:
+          - ~/.codex/auth.json
+          - ~/.codex
+      - name: gitee_pr
+        type: command_help
+        command: gitee pr --help
+      - name: gitee_config
+        type: path_exists
+        path: ~/.gitee/config.yml
+
+  implement:
+    commands:
+      - verilator_coverage
+      - verible-verilog-lint
+      - verible-verilog-syntax
+      - lcov
+      - genhtml
+
+  regress:
+    commands:
+      - verilator_coverage
+      - lcov
+      - genhtml
+
+  pr:
+    commands:
+      - gitee
+    checks:
+      - name: gitee_pr_create
+        type: command_help
+        command: gitee pr create --help
+      - name: gitee_config
+        type: path_exists
+        path: ~/.gitee/config.yml
+      - name: gitee_auth_status
+        type: gitee_auth
+
+  all:
+    include:
+      - plan
+      - implement
+      - regress
+      - pr
+
+optional:
+  commands:
+    - docker
+    - gtkwave
+    - vcs
+    - verdi
+    - claude

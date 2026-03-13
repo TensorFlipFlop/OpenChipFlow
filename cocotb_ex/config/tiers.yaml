@@ -1,0 +1,39 @@
+version: 1
+
+tiers:
+  T0:
+    name: "cheap-volume"
+    provider: "zhipu"
+    model: "glm-4.7"
+    max_concurrency: 8
+    max_input_tokens: 120000
+    max_output_tokens: 4096
+    context_cache: true
+    timeout_sec: 120
+
+  T1:
+    name: "mid-reasoning"
+    provider: "deepseek"
+    model: "deepseek-reasoner"
+    max_concurrency: 4
+    max_input_tokens: 160000
+    max_output_tokens: 8192
+    context_cache: true
+    timeout_sec: 180
+
+  T2:
+    name: "top-referee"
+    provider: "anthropic_or_openai"
+    model: "claude-4-or-gpt4-class"
+    max_concurrency: 2
+    max_input_tokens: 200000
+    max_output_tokens: 8192
+    context_cache: true
+    timeout_sec: 240
+
+budgets:
+  per_case:
+    T2_max_calls: 1
+  per_pr:
+    T2_max_calls: 5
+    T1_max_calls: 50

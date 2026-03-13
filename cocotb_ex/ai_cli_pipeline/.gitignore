@@ -1,0 +1,9 @@
+logs/*
+!logs/.gitkeep
+.env
+verification/sim_fail.log
+verification/regress_fail.log
+config.local.json
+
+# Whitelist specs/out (ignored by root .gitignore **/out/)
+!specs/out/

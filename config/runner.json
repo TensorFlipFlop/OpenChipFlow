@@ -1,0 +1,287 @@
+{
+  "version": 1,
+  "project_root": ".",
+  "log_root": ".runner_logs",
+  "ui": {
+    "default_locale": "zh",
+    "commands": {
+      "list": {
+        "title": {
+          "en": "List Flows / Stages",
+          "zh": "查看 Flows / Stages"
+        },
+        "desc": {
+          "en": "List configured flows and stages",
+          "zh": "查看已配置的 flow 和 stage"
+        }
+      },
+      "doctor": {
+        "title": {
+          "en": "Environment Check",
+          "zh": "环境检查"
+        },
+        "desc": {
+          "en": "Run precheck diagnostics only",
+          "zh": "仅运行环境与前置检查"
+        }
+      }
+    },
+    "request_modes": {
+      "spec_flow": {
+        "title": {
+          "en": "Spec Flow",
+          "zh": "Spec Flow"
+        },
+        "desc": {
+          "en": "Start from a spec input and choose plan or all in the form",
+          "zh": "从 spec 输入起步，并在表单中选择 plan 或 all"
+        }
+      },
+      "handoff_intake": {
+        "title": {
+          "en": "Handoff Intake",
+          "zh": "Handoff Intake"
+        },
+        "desc": {
+          "en": "Audit raw handoff files and emit a gap report / repair prompt",
+          "zh": "审计原始 handoff 文件，并输出 gap report / 补料提示"
+        }
+      },
+      "incremental_verify_ready": {
+        "title": {
+          "en": "Verify-Ready Handoff",
+          "zh": "Verify-Ready Handoff"
+        },
+        "desc": {
+          "en": "Run the verification loop from a verify-ready handoff manifest",
+          "zh": "从 verify-ready handoff manifest 直接进入验证闭环"
+        }
+      }
+    },
+    "flows": {
+      "plan": {
+        "title": {
+          "en": "Plan",
+          "zh": "Plan"
+        },
+        "desc": {
+          "en": "Direct backend flow: generate reqs/testplan from spec without implementation",
+          "zh": "直接运行 backend flow：从 spec 生成 reqs/testplan，不进入实现闭环"
+        }
+      },
+      "all": {
+        "title": {
+          "en": "All",
+          "zh": "All"
+        },
+        "desc": {
+          "en": "Direct backend flow: generate DE/DV code from spec and complete verification",
+          "zh": "直接运行 backend flow：从 spec 生成 DE/DV 代码并完成验证闭环"
+        }
+      },
+      "handoff_intake": {
+        "title": {
+          "en": "Handoff Intake",
+          "zh": "Handoff Intake"
+        },
+        "desc": {
+          "en": "Direct backend flow: audit raw handoff and emit audit / gap report / repair prompt",
+          "zh": "直接运行 backend flow：审计 raw handoff，输出 audit / gap report / repair prompt"
+        }
+      },
+      "incremental_verify_ready": {
+        "title": {
+          "en": "Verify-Ready Handoff",
+          "zh": "Verify-Ready Handoff"
+        },
+        "desc": {
+          "en": "Direct backend flow: consume verify-ready handoff and enter the verification loop",
+          "zh": "直接运行 backend flow：消费 verify-ready handoff 并进入验证闭环"
+        }
+      }
+    },
+    "stages": {
+      "precheck": {
+        "title": {
+          "en": "Precheck",
+          "zh": "前置检查"
+        },
+        "desc": {
+          "en": "Environment checks",
+          "zh": "环境检查"
+        }
+      },
+      "plan": {
+        "title": {
+          "en": "Plan",
+          "zh": "规划"
+        },
+        "desc": {
+          "en": "Planning",
+          "zh": "规划阶段"
+        }
+      },
+      "implement": {
+        "title": {
+          "en": "Implement",
+          "zh": "实现"
+        },
+        "desc": {
+          "en": "Implementation",
+          "zh": "实现阶段"
+        }
+      },
+      "incremental_verify_ready": {
+        "title": {
+          "en": "Incremental Verify-Ready",
+          "zh": "增量 Verify-Ready"
+        },
+        "desc": {
+          "en": "Incremental artifact-first verification flow",
+          "zh": "增量 artifact-first 验证流程"
+        }
+      },
+      "handoff_intake": {
+        "title": {
+          "en": "Handoff Intake",
+          "zh": "Handoff Intake"
+        },
+        "desc": {
+          "en": "Handoff intake audit and repair prompt generation",
+          "zh": "handoff 接收审计与补料提示生成"
+        }
+      },
+      "sim": {
+        "title": {
+          "en": "Simulation",
+          "zh": "仿真"
+        },
+        "desc": {
+          "en": "Simulation",
+          "zh": "仿真"
+        }
+      },
+      "verify": {
+        "title": {
+          "en": "Verify",
+          "zh": "验证"
+        },
+        "desc": {
+          "en": "Verification",
+          "zh": "验证"
+        }
+      },
+      "regress": {
+        "title": {
+          "en": "Regress",
+          "zh": "回归"
+        },
+        "desc": {
+          "en": "Regression",
+          "zh": "回归"
+        }
+      }
+    }
+  },
+  "stages": {
+    "precheck": {
+      "description": "Env checks",
+      "commands": [
+        {
+          "name": "env_check",
+          "cmd": "python3 cocotb_ex/ai_cli_pipeline/check_env.py"
+        },
+        {
+          "name": "sim_doctor",
+          "cmd": "make -C cocotb_ex/sim doctor TOPLEVEL=ai_tb_top RTL_FILELISTS=../filelists/ai_dut.f COCOTB_TEST_MODULES=tests.test_ai"
+        }
+      ]
+    },
+    "plan": {
+      "description": "Planning",
+      "commands": [
+        {
+          "name": "pipeline_preflight",
+          "cmd": "python3 cocotb_ex/ai_cli_pipeline/run_pipeline.py --preflight"
+        },
+        {
+          "name": "workflow_plan",
+          "cmd": "python3 cocotb_ex/ai_cli_pipeline/run_pipeline.py --workflow plan"
+        }
+      ]
+    },
+    "implement": {
+      "description": "Implementation",
+      "commands": [
+        {
+          "name": "workflow_implement",
+          "cmd": "python3 cocotb_ex/ai_cli_pipeline/run_pipeline.py --workflow implement"
+        }
+      ]
+    },
+    "incremental_verify_ready": {
+      "description": "Incremental artifact-first verification flow",
+      "commands": [
+        {
+          "name": "workflow_incremental_verify_ready",
+          "cmd": "python3 cocotb_ex/ai_cli_pipeline/run_pipeline.py --workflow incremental_verify_ready"
+        }
+      ]
+    },
+    "handoff_intake": {
+      "description": "Handoff intake audit and repair prompt generation",
+      "commands": [
+        {
+          "name": "workflow_handoff_intake",
+          "cmd": "python3 cocotb_ex/ai_cli_pipeline/run_pipeline.py --workflow handoff_intake"
+        }
+      ]
+    },
+    "sim": {
+      "description": "Simulation",
+      "commands": [
+        {
+          "name": "make_sim",
+          "cmd": "make -C cocotb_ex/sim sim"
+        }
+      ]
+    },
+    "verify": {
+      "description": "Verification",
+      "commands": [
+        {
+          "name": "make_verify",
+          "cmd": "make verify"
+        }
+      ]
+    },
+    "regress": {
+      "description": "Regression",
+      "commands": [
+        {
+          "name": "make_regress",
+          "cmd": "make -C cocotb_ex/sim regress TOPLEVEL=ai_tb_top RTL_FILELISTS=../filelists/ai_dut.f COCOTB_TEST_MODULES=tests.test_ai COV=0"
+        }
+      ]
+    }
+  },
+  "flows": {
+    "plan": [
+      "precheck",
+      "plan"
+    ],
+    "incremental_verify_ready": [
+      "incremental_verify_ready"
+    ],
+    "handoff_intake": [
+      "handoff_intake"
+    ],
+    "all": [
+      "precheck",
+      "plan",
+      "implement",
+      "verify",
+      "regress"
+    ]
+  }
+}

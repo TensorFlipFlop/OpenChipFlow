@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  ai-cli:
+    build:
+      context: .
+      dockerfile: Dockerfile.ai-cli
+    image: ai-cli:latest

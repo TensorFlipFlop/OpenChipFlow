@@ -1,0 +1,54 @@
+{
+  "schema_version": "artifact_handoff_manifest/v1",
+  "case_id": "incremental_ai_dut_example",
+  "delivery_state": "verify_ready",
+  "docs": {
+    "spec_file": "ai_cli_pipeline/specs/out/spec.md",
+    "reqs_file": "ai_cli_pipeline/specs/out/reqs.md",
+    "testplan_file": "ai_cli_pipeline/specs/out/testplan.md",
+    "baseline_summary_file": "ai_cli_pipeline/examples/incremental_ai_dut/baseline_summary.md",
+    "compat_constraints_file": "ai_cli_pipeline/examples/incremental_ai_dut/compat_constraints.md",
+    "allowlist_file": "ai_cli_pipeline/examples/incremental_ai_dut/changed_files_allowlist.yaml"
+  },
+  "design_assets": {
+    "rtl_file": "rtl/ai_dut.sv",
+    "rtl_filelist": "filelists/ai_dut.f",
+    "tb_wrapper_file": "tb/hdl/ai_tb_top.sv",
+    "tb_py_file": "tb/ai_tb.py",
+    "test_file": "tests/test_ai.py",
+    "top_level": "ai_tb_top",
+    "test_module": "tests.test_ai",
+    "smoke_testcase": "run_basic"
+  },
+  "change_scope": {
+    "allowed_modify": [
+      "rtl/ai_dut.sv",
+      "filelists/ai_dut.f",
+      "tb/hdl/ai_tb_top.sv",
+      "tb/ai_tb.py",
+      "tests/test_ai.py"
+    ],
+    "allowed_create": [],
+    "forbidden_actions": [
+      "rename_design_files",
+      "delete_design_files",
+      "regenerate_design_directory"
+    ]
+  },
+  "verification": {
+    "backends": [
+      "verilator"
+    ],
+    "smoke_testcase": "run_basic",
+    "regression_modules": [
+      "tests.test_ai"
+    ]
+  },
+  "source_context": {
+    "reference_docs": [
+      "ai_cli_pipeline/examples/incremental_ai_dut/source_requirements/spec.md",
+      "ai_cli_pipeline/examples/incremental_ai_dut/source_requirements/overview.md"
+    ],
+    "semantic_review_mode": "required"
+  }
+}

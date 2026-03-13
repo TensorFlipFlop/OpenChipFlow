@@ -1,0 +1,16 @@
+task: incremental_ai_dut_manifestless
+mode: verify_ready
+
+allowed_modify:
+  - rtl/ai_dut.sv
+  - filelists/ai_dut.f
+  - tb/hdl/ai_tb_top.sv
+  - tb/ai_tb.py
+  - tests/test_ai.py
+
+allowed_create: []
+
+forbidden_actions:
+  - rename_design_files
+  - delete_design_files
+  - regenerate_design_directory

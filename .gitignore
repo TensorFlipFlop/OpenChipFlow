@@ -1,0 +1,13 @@
+.runner_logs/
+artifacts/doctor/
+artifacts/requests/
+artifacts/runs/
+artifacts/sessions/
+artifacts/triage/
+artifacts/sticky/
+artifacts/handoff/escalation_packet.json
+__pycache__/
+*.pyc
+cocotb_ex/sim_build/
+cocotb_ex/artifacts/sessions/
+ISSUE.md

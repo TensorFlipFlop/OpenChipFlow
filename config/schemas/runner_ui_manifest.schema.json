@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-chip-flow.local/schemas/runner_ui_manifest.schema.json",
+  "title": "Runner UI Manifest",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "run_id",
+    "session_id",
+    "command",
+    "target",
+    "mode",
+    "dry_run",
+    "rc",
+    "primary_artifacts",
+    "next_actions"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "runner_ui_manifest/v1"
+    },
+    "run_id": { "type": "string" },
+    "session_id": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "command": { "type": "string" },
+    "target": { "type": "string" },
+    "mode": { "type": "string" },
+    "dry_run": { "type": "boolean" },
+    "project_root": { "type": "string" },
+    "repo_name": { "type": ["string", "null"] },
+    "config_path": { "type": ["string", "null"] },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "rc": { "type": "integer" },
+    "request_manifest": { "type": ["string", "null"] },
+    "request_artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact" }
+    },
+    "input_artifacts": {
+      "type": "array",
+      "items": { "type": "object", "additionalProperties": true }
+    },
+    "primary_artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact" }
+    },
+    "secondary_artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact" }
+    },
+    "log_files": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "object", "additionalProperties": true }
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "label", "path", "abs_path", "exists"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "kind": { "type": "string" },
+        "path": { "type": "string" },
+        "abs_path": { "type": "string" },
+        "exists": { "type": "boolean" },
+        "preview_only": { "type": "boolean" },
+        "previewable": { "type": "boolean" },
+        "copyable": { "type": "boolean" }
+      }
+    }
+  }
+}

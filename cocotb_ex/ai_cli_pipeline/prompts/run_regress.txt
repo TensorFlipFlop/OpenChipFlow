@@ -1,0 +1,19 @@
+You are working in the repository root (current working directory).
+Do not prefix paths with "cocotb_ex/".
+
+Run regression for the AI DUT using make:
+- Command: make -C sim regress TOPLEVEL={top_level} RTL_FILELISTS={rtl_filelist} REGR_MODULES="{regr_modules}" REGR_SEEDS="{regr_seeds}" REGR_OUT="{regr_out}" WAVES=0 COV=0
+
+Capture all stdout/stderr to {error_logs} (overwrite). Use a single bash command with pipefail and tee.
+
+If the make command succeeds (exit 0):
+- Remove {error_logs} if it exists.
+- Print "REGRESS_PASS".
+
+If it fails:
+- Leave {error_logs} in place.
+- Print "REGRESS_FAIL".
+
+Constraints:
+- Use the exact path given for {error_logs}; do not add prefixes.
+- Do not modify any other files.

@@ -1,0 +1,15 @@
+You are working in the repository root at /work.
+The repository root is /work; do not prefix paths with "cocotb_ex/" or "/work/cocotb_ex".
+
+Ensure the current branch is a case-specific branch named:
+  dev_{timestamp}
+
+Steps:
+- If already on dev_{timestamp}, do nothing and print "BRANCH_OK".
+- If the branch exists locally, check it out.
+- If it does not exist, create it from the current HEAD.
+
+Constraints:
+- Use only git commands.
+- Do not modify files.
+- Do not commit or push.

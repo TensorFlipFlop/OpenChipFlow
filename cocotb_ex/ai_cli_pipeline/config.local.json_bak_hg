@@ -1,0 +1,57 @@
+{
+  "ai_cli_tools": {
+    "claude": {
+      "runner": "host",
+      "cmd": [
+        "claude",
+        "-p",
+        "--permission-mode",
+        "bypassPermissions",
+        "--tools",
+        "Bash,Read,Write,Edit",
+        "--allowedTools",
+        "Bash,Read,Write,Edit",
+        "--no-session-persistence"
+      ],
+      "env": ["ANTHROPIC_API_KEY"]
+    },
+    "codex": {
+      "runner": "host",
+      "cmd": [
+        "codex",
+        "--ask-for-approval",
+        "never",
+        "--sandbox",
+        "workspace-write",
+        "exec",
+        "--skip-git-repo-check",
+        "-"
+      ],
+      "env": ["OPENAI_API_KEY"]
+    },
+    "gemini": {
+      "runner": "host",
+      "cmd": [
+        "gemini",
+        "--approval-mode",
+        "yolo",
+        "--output-format",
+        "text"
+      ],
+      "env": [
+        "GEMINI_API_KEY",
+        "GOOGLE_API_KEY",
+        "GOOGLE_GENAI_USE_VERTEXAI",
+        "GOOGLE_GENAI_USE_GCA"
+      ]
+    }
+  },
+  "roles": {
+    "req_testplan_generator": {
+      "ai_cli": "claude"
+    },
+    "dv_agent": {
+      "ai_cli": "claude"
+    }
+  }
+}

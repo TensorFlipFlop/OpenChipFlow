@@ -1,0 +1,14 @@
+[
+  {
+    "error_pattern": "RuntimeError: Attempting settings a value during the ReadOnly phase",
+    "fix_strategy": "Insert `await Timer(1, 'ps')` before the signal assignment causing the error to transition to a writable phase."
+  },
+  {
+    "error_pattern": "ValueError: Timer argument time must be positive",
+    "fix_strategy": "Replace `Timer(0, ...)` with `Timer(1, 'ps')`."
+  },
+  {
+    "error_pattern": "AssertionError: mst_valid asserted with zero credit",
+    "fix_strategy": "Check TB model synchronization. Ensure inputs are sampled pre-edge and outputs post-edge. Verify if model state update order matches RTL register update logic."
+  }
+]

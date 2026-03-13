@@ -1,0 +1,673 @@
+{
+  "generated_at": "2026-03-08T01:40:35.020822+08:00",
+  "project_root": "/home/user/.openclaw/workspace/projects/open-chip-flow",
+  "tools": {
+    "codex": {
+      "name": "codex",
+      "binary": "codex",
+      "found": true,
+      "path": "/home/user/.nvm/versions/node/v22.22.0/bin/codex",
+      "help_rc": 0,
+      "capabilities": {
+        "model_switch": true,
+        "thinking_switch": false,
+        "variant_switch": false,
+        "approval_mode": false
+      },
+      "choices": {
+        "approval_mode": [],
+        "variant": [],
+        "thinking": [],
+        "model": []
+      }
+    },
+    "gemini": {
+      "name": "gemini",
+      "binary": "gemini",
+      "found": true,
+      "path": "/home/user/.nvm/versions/node/v22.22.0/bin/gemini",
+      "help_rc": 127,
+      "capabilities": {
+        "model_switch": false,
+        "thinking_switch": false,
+        "variant_switch": false,
+        "approval_mode": false
+      },
+      "choices": {
+        "approval_mode": [],
+        "variant": [],
+        "thinking": [],
+        "model": []
+      }
+    },
+    "opencode": {
+      "name": "opencode",
+      "binary": "opencode",
+      "found": true,
+      "path": "/home/user/.opencode/bin/opencode",
+      "help_rc": 0,
+      "capabilities": {
+        "model_switch": true,
+        "thinking_switch": true,
+        "variant_switch": true,
+        "approval_mode": false
+      },
+      "choices": {
+        "approval_mode": [],
+        "variant": [],
+        "thinking": [],
+        "model": []
+      }
+    }
+  },
+  "runner_tool_map": {
+    "codex_host": {
+      "runner": "host",
+      "cmd": [
+        "codex",
+        "--ask-for-approval",
+        "never",
+        "--sandbox",
+        "workspace-write",
+        "exec",
+        "--skip-git-repo-check",
+        "-"
+      ],
+      "entry": "codex",
+      "uses_model": false,
+      "uses_variant": false,
+      "uses_thinking": false,
+      "default_model": null,
+      "default_variant": null,
+      "default_thinking": null
+    },
+    "gemini_host": {
+      "runner": "host",
+      "cmd": [
+        "gemini",
+        "--approval-mode",
+        "yolo",
+        "--output-format",
+        "text"
+      ],
+      "entry": "gemini",
+      "uses_model": false,
+      "uses_variant": false,
+      "uses_thinking": false,
+      "default_model": null,
+      "default_variant": null,
+      "default_thinking": null
+    },
+    "claude_docker": {
+      "runner": "docker",
+      "cmd": [
+        "claude",
+        "-p",
+        "--permission-mode",
+        "bypassPermissions",
+        "--tools",
+        "Bash,Read,Write,Edit",
+        "--allowedTools",
+        "Bash,Read,Write,Edit",
+        "--no-session-persistence"
+      ],
+      "entry": "claude",
+      "uses_model": false,
+      "uses_variant": false,
+      "uses_thinking": false,
+      "default_model": null,
+      "default_variant": null,
+      "default_thinking": null
+    },
+    "codex_docker": {
+      "runner": "docker",
+      "cmd": [
+        "codex",
+        "--ask-for-approval",
+        "never",
+        "--sandbox",
+        "workspace-write",
+        "-C",
+        "/work",
+        "exec",
+        "--skip-git-repo-check",
+        "-"
+      ],
+      "entry": "codex",
+      "uses_model": false,
+      "uses_variant": false,
+      "uses_thinking": false,
+      "default_model": null,
+      "default_variant": null,
+      "default_thinking": null
+    },
+    "gemini_docker": {
+      "runner": "docker",
+      "cmd": [
+        "gemini",
+        "--approval-mode",
+        "yolo",
+        "--output-format",
+        "text"
+      ],
+      "entry": "gemini",
+      "uses_model": false,
+      "uses_variant": false,
+      "uses_thinking": false,
+      "default_model": null,
+      "default_variant": null,
+      "default_thinking": null
+    },
+    "claude_host": {
+      "runner": "host",
+      "cmd": [
+        "claude",
+        "-p",
+        "--permission-mode",
+        "bypassPermissions",
+        "--tools",
+        "Bash,Read,Write,Edit",
+        "--allowedTools",
+        "Bash,Read,Write,Edit",
+        "--no-session-persistence"
+      ],
+      "entry": "claude",
+      "uses_model": false,
+      "uses_variant": false,
+      "uses_thinking": false,
+      "default_model": null,
+      "default_variant": null,
+      "default_thinking": null
+    },
+    "claude_pr": {
+      "runner": "host",
+      "cmd": [
+        "claude",
+        "-p",
+        "--permission-mode",
+        "bypassPermissions",
+        "--tools",
+        "Bash,Read,Write,Edit",
+        "--allowedTools",
+        "Bash,Read,Write,Edit",
+        "--no-session-persistence"
+      ],
+      "entry": "claude",
+      "uses_model": false,
+      "uses_variant": false,
+      "uses_thinking": false,
+      "default_model": null,
+      "default_variant": null,
+      "default_thinking": null
+    },
+    "bash_host": {
+      "runner": "host",
+      "cmd": [
+        "bash"
+      ],
+      "entry": "bash",
+      "uses_model": false,
+      "uses_variant": false,
+      "uses_thinking": false,
+      "default_model": null,
+      "default_variant": null,
+      "default_thinking": null
+    },
+    "verible_format_host": {
+      "runner": "host",
+      "cmd": [
+        "bash",
+        "tools/verible_format.sh"
+      ],
+      "entry": "bash",
+      "uses_model": false,
+      "uses_variant": false,
+      "uses_thinking": false,
+      "default_model": null,
+      "default_variant": null,
+      "default_thinking": null
+    },
+    "opencode_host": {
+      "runner": "host",
+      "cmd": [
+        "opencode",
+        "run",
+        "-m",
+        "google/antigravity-gemini-3-pro",
+        "--variant",
+        "high"
+      ],
+      "entry": "opencode",
+      "uses_model": true,
+      "uses_variant": true,
+      "uses_thinking": false,
+      "default_model": "google/antigravity-gemini-3-pro",
+      "default_variant": "high",
+      "default_thinking": null
+    },
+    "opencode_docker": {
+      "runner": "docker",
+      "cmd": [
+        "opencode",
+        "run",
+        "-m",
+        "google/antigravity-gemini-3-pro",
+        "--variant",
+        "high"
+      ],
+      "entry": "opencode",
+      "uses_model": true,
+      "uses_variant": true,
+      "uses_thinking": false,
+      "default_model": "google/antigravity-gemini-3-pro",
+      "default_variant": "high",
+      "default_thinking": null
+    }
+  },
+  "runtime_catalog": {
+    "models": [
+      "gpt-5",
+      "gpt-5-codex",
+      "gpt-5-codex-mini",
+      "gpt-5.1",
+      "gpt-5.1-codex",
+      "gpt-5.1-codex-max",
+      "gpt-5.1-codex-mini",
+      "gpt-5.2",
+      "gpt-5.2-codex",
+      "gpt-5.3-codex",
+      "gpt-5.4",
+      "auto-gemini-3",
+      "gemini-2.5-flash",
+      "gemini-2.5-pro",
+      "gemini-3-flash-preview",
+      "gemini-3-pro-preview",
+      "google/antigravity-gemini-3-pro"
+    ],
+    "variants": [
+      "high",
+      "low",
+      "medium",
+      "xhigh"
+    ],
+    "thinking_levels": [],
+    "tool_defaults": {
+      "codex_host": {
+        "model": null,
+        "variant": null,
+        "thinking": null
+      },
+      "gemini_host": {
+        "model": null,
+        "variant": null,
+        "thinking": null
+      },
+      "claude_docker": {
+        "model": null,
+        "variant": null,
+        "thinking": null
+      },
+      "codex_docker": {
+        "model": null,
+        "variant": null,
+        "thinking": null
+      },
+      "gemini_docker": {
+        "model": null,
+        "variant": null,
+        "thinking": null
+      },
+      "claude_host": {
+        "model": null,
+        "variant": null,
+        "thinking": null
+      },
+      "claude_pr": {
+        "model": null,
+        "variant": null,
+        "thinking": null
+      },
+      "bash_host": {
+        "model": null,
+        "variant": null,
+        "thinking": null
+      },
+      "verible_format_host": {
+        "model": null,
+        "variant": null,
+        "thinking": null
+      },
+      "opencode_host": {
+        "model": "google/antigravity-gemini-3-pro",
+        "variant": "high",
+        "thinking": null
+      },
+      "opencode_docker": {
+        "model": "google/antigravity-gemini-3-pro",
+        "variant": "high",
+        "thinking": null
+      }
+    },
+    "model_profiles": {
+      "gpt-5.3-codex": {
+        "family": "codex",
+        "label": "gpt-5.3-codex",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "gpt-5.4": {
+        "family": "codex",
+        "label": "gpt-5.4",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "gpt-5.2-codex": {
+        "family": "codex",
+        "label": "gpt-5.2-codex",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "gpt-5.1-codex-max": {
+        "family": "codex",
+        "label": "gpt-5.1-codex-max",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "gpt-5.1-codex": {
+        "family": "codex",
+        "label": "gpt-5.1-codex",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "gpt-5.2": {
+        "family": "codex",
+        "label": "gpt-5.2",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "gpt-5.1": {
+        "family": "codex",
+        "label": "gpt-5.1",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "gpt-5-codex": {
+        "family": "codex",
+        "label": "gpt-5-codex",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "gpt-5": {
+        "family": "codex",
+        "label": "gpt-5",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "gpt-5.1-codex-mini": {
+        "family": "codex",
+        "label": "gpt-5.1-codex-mini",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "gpt-5-codex-mini": {
+        "family": "codex",
+        "label": "gpt-5-codex-mini",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          },
+          {
+            "value": "xhigh",
+            "label": "Extra High"
+          }
+        ],
+        "source": "/home/user/.codex/models_cache.json"
+      },
+      "auto-gemini-3": {
+        "family": "gemini",
+        "label": "auto-gemini-3",
+        "default_variant": null,
+        "variants": [],
+        "source": "/home/user/.gemini/tmp"
+      },
+      "gemini-2.5-flash": {
+        "family": "gemini",
+        "label": "gemini-2.5-flash",
+        "default_variant": null,
+        "variants": [],
+        "source": "/home/user/.gemini/tmp"
+      },
+      "gemini-2.5-pro": {
+        "family": "gemini",
+        "label": "gemini-2.5-pro",
+        "default_variant": null,
+        "variants": [],
+        "source": "/home/user/.gemini/tmp"
+      },
+      "gemini-3-flash-preview": {
+        "family": "gemini",
+        "label": "gemini-3-flash-preview",
+        "default_variant": null,
+        "variants": [],
+        "source": "/home/user/.gemini/tmp"
+      },
+      "gemini-3-pro-preview": {
+        "family": "gemini",
+        "label": "gemini-3-pro-preview",
+        "default_variant": null,
+        "variants": [],
+        "source": "/home/user/.gemini/tmp"
+      },
+      "google/antigravity-gemini-3-pro": {
+        "family": "opencode",
+        "label": "google/antigravity-gemini-3-pro",
+        "default_variant": "high",
+        "variants": [
+          {
+            "value": "low",
+            "label": "Low"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "high",
+            "label": "High"
+          }
+        ],
+        "source": "runner_tool_map"
+      }
+    }
+  }
+}

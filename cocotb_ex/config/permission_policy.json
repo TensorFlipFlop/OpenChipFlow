@@ -1,0 +1,24 @@
+{
+    "allowlist": [
+        "python3", "python", "make", "ls", "grep", "cat", "echo", "mkdir",
+        "cp", "mv", "git", "iverilog", "vvp", "gtkwave", "rm",
+        "cocotb-config", "pytest", "pylint"
+    ],
+    "dangerous_patterns": [
+        "rm\\s+-[rf]+.*",
+        "mkfs.*",
+        "dd\\s+if=.*",
+        "chmod\\s+777.*"
+    ],
+    "timeouts": {
+        "simulation": 300,
+        "synthesis": 600,
+        "lint": 60,
+        "default": 30
+    },
+    "retries": {
+        "network": 3,
+        "io": 2,
+        "default": 0
+    }
+}

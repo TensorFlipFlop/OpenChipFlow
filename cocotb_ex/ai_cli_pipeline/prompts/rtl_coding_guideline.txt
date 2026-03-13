@@ -1,0 +1,176 @@
+## Coding Style Constraint: Next-State Separation (MANDATORY)
+
+### 1. Principle (MANDATORY)
+
+The RTL of this module **must** follow a strict **two-process** structure:
+
+* **Combinational process (`always_comb`)** computes **all** next-state signals `next_*` (including internal state registers and registered outputs).
+* **Sequential process (`always_ff`)** updates registers **only** from `next_*` on the clock edge.
+
+This separation is required to:
+
+* avoid inconsistent enable/condition duplication across multiple registers,
+* improve readability and reviewability,
+* make lint/formal/CDC checks more robust.
+
+---
+
+### 2. Assignment Operator Rules (MANDATORY, explicit)
+
+To eliminate simulation scheduling ambiguity, the following operator rules are **strict**:
+
+1. **Combinational logic uses blocking assignment `=` ONLY**
+
+* Inside `always_comb`, **use `=` for all assignments** (both `next_*` and any temporary variables).
+* **Do NOT use `<=`** in `always_comb`.
+
+2. **Sequential logic uses non-blocking assignment `<=` ONLY**
+
+* Inside `always_ff`, **use `<=` for register updates**.
+* **Do NOT use `=`** in `always_ff` (except optional local temporary variables are discouraged; compute temporaries in `always_comb` instead).
+
+Rationale (for clarity):
+
+* Blocking `=` in combinational logic models “evaluate-in-order within the same cycle” behavior.
+* Non-blocking `<=` in sequential logic models “all registers update in parallel on the clock edge” behavior.
+
+---
+
+### 3. `always_comb` Requirements (MANDATORY)
+
+1. **Complete default assignment**
+   At the start of `always_comb`, every `next_*` must be assigned a default value equal to its current register value, to prevent latch inference:
+
+* `next_x = x;`
+* `next_y = y;`
+* …
+
+2. **Centralize event/handshake conditions**
+   All event conditions (e.g. `in_fire`, `wr_fire`, `rd_fire`, `out_fire`) must be declared as `logic`/`wire` and computed in one place (outside or at the top of `always_comb`), then used consistently in `always_comb`. Avoid re-deriving the same condition in multiple places.
+
+3. **No combinational feedback loops**
+   Do not create combinational loops between `valid/ready/data` signals. If a loop risk exists, break it using registered state (`next_*` / regs) rather than pure combinational dependency.
+
+---
+
+### 4. `always_ff` Requirements (MANDATORY)
+
+1. **Register update only**
+   In `always_ff`, each register must be updated **only** as:
+
+* reset branch: `reg <= RESET_VALUE;`
+* non-reset branch: `reg <= next_reg;`
+
+No functional `if/case` logic is allowed in `always_ff` beyond reset handling. All functional decisions must be made in `always_comb`.
+
+2. **Clock-domain separation**
+
+* Registers belonging to **clk1 domain** must be updated only in `always_ff @(posedge clk1 or negedge clk1_rst_n)`.
+* Registers belonging to **clk2 domain** must be updated only in `always_ff @(posedge clk2 or negedge clk2_rst_n)`.
+  A register must never be updated in more than one clock domain.
+
+3. **Registered outputs follow the same rule**
+   Any registered output (e.g. `data_out`, `data_out_valid`, `clk1_ready` if implemented as registered) must have corresponding `next_*` signals computed in `always_comb` and updated in the appropriate domain’s `always_ff`.
+
+---
+
+### 5. Recommended Structural Template (MUST match intent)
+
+```systemverilog
+// ----------------------------------------
+// Event conditions (centralized)
+// ----------------------------------------
+logic in_fire;   // e.g., data_in_valid && clk1_ready
+logic wr_fire;   // e.g., af_wr_valid && af_wr_ready
+logic rd_fire;   // e.g., af_rd_valid && af_rd_ready
+logic out_fire;  // e.g., data_out_valid && clk2_ready
+
+// ----------------------------------------
+// Registers and next_*
+// ----------------------------------------
+logic        have_a,       next_have_a;
+logic        a_reg,        next_a_reg;
+logic [1:0]  hold_word,    next_hold_word;
+logic        hold_valid,   next_hold_valid;
+
+logic [1:0]  out_data_reg,  next_out_data_reg;
+logic        out_valid_reg, next_out_valid_reg;
+
+logic        clk1_ready_reg, next_clk1_ready_reg; // if clk1_ready is registered
+
+// ----------------------------------------
+// Combinational next-state logic (blocking '=' only)
+// ----------------------------------------
+always_comb begin
+  // (1) Defaults: next_* = current regs
+  next_have_a        = have_a;
+  next_a_reg         = a_reg;
+  next_hold_word     = hold_word;
+  next_hold_valid    = hold_valid;
+
+  next_out_data_reg  = out_data_reg;
+  next_out_valid_reg = out_valid_reg;
+
+  next_clk1_ready_reg = clk1_ready_reg;
+
+  // (2) Functional overrides using centralized events
+  // if (in_fire) ...
+  // if (wr_fire) ...
+  // if (rd_fire) ...
+  // if (out_fire) ...
+end
+
+// ----------------------------------------
+// Sequential logic: registers update (non-blocking '<=' only)
+// ----------------------------------------
+always_ff @(posedge clk1 or negedge clk1_rst_n) begin
+  if (!clk1_rst_n) have_a <= 1'b0;
+  else             have_a <= next_have_a;
+end
+
+always_ff @(posedge clk1 or negedge clk1_rst_n) begin
+  if (!clk1_rst_n) a_reg <= 1'b0;
+  else             a_reg <= next_a_reg;
+end
+
+always_ff @(posedge clk1 or negedge clk1_rst_n) begin
+  if (!clk1_rst_n) hold_word <= '0;
+  else             hold_word <= next_hold_word;
+end
+
+always_ff @(posedge clk1 or negedge clk1_rst_n) begin
+  if (!clk1_rst_n) hold_valid <= 1'b0;
+  else             hold_valid <= next_hold_valid;
+end
+
+always_ff @(posedge clk2 or negedge clk2_rst_n) begin
+  if (!clk2_rst_n) out_data_reg <= '0;
+  else             out_data_reg <= next_out_data_reg;
+end
+
+always_ff @(posedge clk2 or negedge clk2_rst_n) begin
+  if (!clk2_rst_n) out_valid_reg <= 1'b0;
+  else             out_valid_reg <= next_out_valid_reg;
+end
+```
+
+---
+
+### 6. Prohibited Patterns (MANDATORY)
+
+* Using `<=` inside `always_comb`.
+* Using `=` inside `always_ff` (beyond reset is not allowed; functional logic must not be in `always_ff`).
+* Missing default assignments for any `next_*` in `always_comb` (prevents latch inference).
+* Driving the same register from multiple processes or clock domains.
+* Creating combinational loops between `ready/valid/data`.
+
+---
+
+### 7. Mandatory Self-Checks (MANDATORY)
+
+* Every `next_*` is assigned in `always_comb` for all paths (default + conditional overrides).
+* Every register is updated in exactly one `always_ff` in exactly one clock domain.
+* Backpressure stability: when `valid==1 && ready==0`, the corresponding output `data` remains stable until handshake completes.
+* No latch inference warnings from lint/synthesis; no `always_comb` incomplete assignment issues.
+
+---

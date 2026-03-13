@@ -1,0 +1,6 @@
+version: 1
+
+hooks:
+  hooks_path: "cocotb_ex/.githooks"
+  enable_pre_commit: true
+  enable_commit_msg: true

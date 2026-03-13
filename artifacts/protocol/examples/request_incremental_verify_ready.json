@@ -1,0 +1,14 @@
+{
+  "schema_version": "runner_request_manifest/v1",
+  "session_id": "example_incremental_verify_ready",
+  "mode": "incremental_verify_ready",
+  "execution": {
+    "dry_run": false
+  },
+  "inputs": {
+    "handoff_manifest": {
+      "path": "cocotb_ex/ai_cli_pipeline/examples/incremental_ai_dut/handoff_manifest.json",
+      "import_mode": "reference"
+    }
+  }
+}

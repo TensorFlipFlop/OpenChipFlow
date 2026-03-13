@@ -1,0 +1,26 @@
+You are working in /work.
+The repository root is /work; do not prefix paths with "cocotb_ex/" or "/work/cocotb_ex".
+
+Read {spec_file} and {reqs_file}, then generate the following outputs:
+- DUT RTL at {dut_output} (SystemVerilog).
+- TB HDL wrapper at {tb_output} (SystemVerilog).
+- Cocotb TB helper at {tb_py_output} (Python, reusable class for this DUT).
+- Cocotb tests at {test_output} (Python, test entrypoints only).
+- RTL filelist at {filelist_output} (list DUT RTL sources only).
+
+**RTL Coding Guideline (DUT RTL MANDATORY):**
+{read_file: prompts/rtl_coding_guideline.txt}
+
+Constraints:
+- Keep the design minimal but consistent with the spec.
+- Reuse existing cocotb_ex conventions (naming, tb/hdl layout).
+- Name the top module ai_tb_top and the cocotb test module tests.test_ai with a test function run_basic.
+- Put shared TB logic into {tb_py_output}; keep {test_output} thin and importing the helper class.
+- Filelist entries are resolved relative to the filelist directory; use ../rtl/<file>.sv for DUT paths.
+- Apply the RTL coding guideline to the DUT RTL; keep the TB HDL wrapper structural and minimal.
+- Use precise, concise technical documentation language in any comments; avoid colloquial phrasing. Do NOT use "I", "you", "we".
+- Do not modify any files beyond the outputs above.
+- Use ASCII unless existing files already contain non-ASCII; preserve existing language when present.
+- Overwrite outputs if they already exist.
+
+Do not ask for confirmation. Do not output additional text.

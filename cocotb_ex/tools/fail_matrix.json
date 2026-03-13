@@ -1,0 +1,15 @@
+{
+  "summary": {
+    "requirements": 1,
+    "ok": 0,
+    "no_testplan": 0,
+    "missing_test_impl": 0,
+    "no_signal_link": 0
+  },
+  "requirements": [
+    {
+      "req_id": "REQ-001",
+      "status": "FAIL_TEST"
+    }
+  ]
+}

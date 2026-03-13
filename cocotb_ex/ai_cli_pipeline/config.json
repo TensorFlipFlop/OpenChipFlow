@@ -1,0 +1,1068 @@
+{
+  "workspace": "..",
+  "log_dir": "ai_cli_pipeline/logs",
+  "stop_on_fail": true,
+  "case_id_env": "AI_CASE_ID",
+  "global_parameters": {
+    "case_id": "case",
+    "default_timeout": 600,
+    "inbox_spec_path": "ai_cli_pipeline/specs/inbox/spec.md",
+    "spec_path": "ai_cli_pipeline/specs/out/spec.md",
+    "reqs_path": "ai_cli_pipeline/specs/out/reqs.md",
+    "testplan_path": "ai_cli_pipeline/specs/out/testplan.md",
+    "baseline_summary_path": "",
+    "compat_constraints_path": "",
+    "allowlist_doc_path": "",
+    "rtl_path": "rtl/ai_dut.sv",
+    "rtl_filelist_path": "filelists/ai_dut.f",
+    "sim_rtl_filelist_path": "../filelists/ai_dut.f",
+    "tb_wrapper_path": "tb/hdl/ai_tb_top.sv",
+    "tb_py_path": "tb/ai_tb.py",
+    "test_path": "tests/test_ai.py",
+    "toplevel_name": "ai_tb_top",
+    "test_module_name": "tests.test_ai",
+    "smoke_testcase_name": "run_basic",
+    "regression_modules": "",
+    "verify_script_path": "ai_cli_pipeline/verification/run_verification.sh",
+    "handoff_root_path": "",
+    "handoff_manifest_path": "",
+    "source_requirements_root_path": "",
+    "target_state": "verify_ready",
+    "backend_policy": "",
+    "semantic_review_mode": "required",
+    "session_root_path": "",
+    "session_workspace_root": "",
+    "handoff_output_dir": "artifacts/handoff",
+    "handoff_context_path": "artifacts/handoff/handoff_context.json",
+    "case_schedule_path": "artifacts/case_schedule.json",
+    "testcase_validation_path": "ai_cli_pipeline/verification/testcase_validation.json",
+    "trace_matrix_md_path": "ai_cli_pipeline/verification/req_trace_matrix.md",
+    "trace_matrix_json_path": "ai_cli_pipeline/verification/req_trace_matrix.json",
+    "verify_report_path": "ai_cli_pipeline/verification/verify.md",
+    "sim_fail_log_path": "ai_cli_pipeline/verification/sim_fail.log",
+    "fix_notes_sim_path": "ai_cli_pipeline/verification/fix_notes_sim.md",
+    "sim_failures_dir": "ai_cli_pipeline/verification/failures",
+    "regress_fail_log_path": "ai_cli_pipeline/verification/regress_fail.log",
+    "fix_notes_regress_path": "ai_cli_pipeline/verification/fix_notes_regress.md",
+    "incremental_compliance_out_path": "artifacts/ops/incremental_compliance_{timestamp}.json",
+    "implement_contract_out_path": "artifacts/ops/implement_contract_{timestamp}.json",
+    "incremental_contract_out_path": "artifacts/ops/incremental_contract_{timestamp}.json"
+  },
+  "role_groups": {
+    "generator": [
+      "spec_normalizer",
+      "spec_refiner",
+      "req_testplan_generator",
+      "de_agent",
+      "dv_agent",
+      "testplan_dispatcher"
+    ],
+    "fixer": [
+      "sim_fixer",
+      "regress_fixer"
+    ],
+    "reviewer": [
+      "verifier",
+      "sim_fail_summary",
+      "handoff_semantic_reviewer"
+    ]
+  },
+  "writable_role_groups": [
+    "fixer",
+    "reviewer"
+  ],
+  "tool_assignments": {
+    "generator": "codex_host",
+    "fixer": "codex_host",
+    "reviewer": "codex_host"
+  },
+  "ai_cli_tools": {
+    "codex_host": {
+      "runner": "host",
+      "cmd": [
+        "codex",
+        "--ask-for-approval",
+        "never",
+        "--sandbox",
+        "workspace-write",
+        "exec",
+        "--skip-git-repo-check",
+        "-"
+      ],
+      "stdin": true,
+      "env": [
+        "OPENAI_API_KEY"
+      ]
+    },
+    "gemini_host": {
+      "runner": "host",
+      "cmd": [
+        "gemini",
+        "--approval-mode",
+        "yolo",
+        "--output-format",
+        "text"
+      ],
+      "stdin": true,
+      "env": [
+        "GEMINI_API_KEY",
+        "GOOGLE_API_KEY",
+        "GOOGLE_GENAI_USE_VERTEXAI",
+        "GOOGLE_GENAI_USE_GCA"
+      ]
+    },
+    "claude_docker": {
+      "runner": "docker",
+      "image": "ai-cli:latest",
+      "cmd": [
+        "claude",
+        "-p",
+        "--permission-mode",
+        "bypassPermissions",
+        "--tools",
+        "Bash,Read,Write,Edit",
+        "--allowedTools",
+        "Bash,Read,Write,Edit",
+        "--no-session-persistence"
+      ],
+      "stdin": true,
+      "mounts": [
+        {
+          "source": "~/.claude",
+          "target": "/home/node/.claude",
+          "mode": "rw"
+        },
+        {
+          "source": "~/.claude.json",
+          "target": "/home/node/.claude.json",
+          "mode": "rw"
+        },
+        {
+          "source": "~/.config/claude",
+          "target": "/home/node/.config/claude",
+          "mode": "rw"
+        }
+      ],
+      "env": [
+        "ANTHROPIC_API_KEY"
+      ]
+    },
+    "codex_docker": {
+      "runner": "docker",
+      "image": "ai-cli:latest",
+      "cmd": [
+        "codex",
+        "--ask-for-approval",
+        "never",
+        "--sandbox",
+        "workspace-write",
+        "-C",
+        "/work",
+        "exec",
+        "--skip-git-repo-check",
+        "-"
+      ],
+      "stdin": true,
+      "mounts": [
+        {
+          "source": "~/.codex",
+          "target": "/home/node/.codex",
+          "mode": "rw"
+        },
+        {
+          "source": "~/.config/openai",
+          "target": "/home/node/.config/openai",
+          "mode": "rw"
+        },
+        {
+          "source": "docker/codex_config.toml",
+          "target": "/home/node/.codex/config.toml",
+          "mode": "ro"
+        }
+      ],
+      "env": [
+        "OPENAI_API_KEY"
+      ]
+    },
+    "gemini_docker": {
+      "runner": "docker",
+      "image": "ai-cli:latest",
+      "cmd": [
+        "gemini",
+        "--approval-mode",
+        "yolo",
+        "--output-format",
+        "text"
+      ],
+      "stdin": true,
+      "mounts": [
+        {
+          "source": "~/.gemini",
+          "target": "/home/node/.gemini",
+          "mode": "rw"
+        },
+        {
+          "source": "~/.config/gemini",
+          "target": "/home/node/.config/gemini",
+          "mode": "rw"
+        },
+        {
+          "source": "~/.config/gemini-cli",
+          "target": "/home/node/.config/gemini-cli",
+          "mode": "rw"
+        }
+      ],
+      "env": [
+        "GEMINI_API_KEY",
+        "GOOGLE_API_KEY",
+        "GOOGLE_GENAI_USE_VERTEXAI",
+        "GOOGLE_GENAI_USE_GCA"
+      ]
+    },
+    "claude_host": {
+      "runner": "host",
+      "cmd": [
+        "claude",
+        "-p",
+        "--permission-mode",
+        "bypassPermissions",
+        "--tools",
+        "Bash,Read,Write,Edit",
+        "--allowedTools",
+        "Bash,Read,Write,Edit",
+        "--no-session-persistence"
+      ],
+      "stdin": true,
+      "env": []
+    },
+    "claude_pr": {
+      "runner": "host",
+      "cmd": [
+        "claude",
+        "-p",
+        "--permission-mode",
+        "bypassPermissions",
+        "--tools",
+        "Bash,Read,Write,Edit",
+        "--allowedTools",
+        "Bash,Read,Write,Edit",
+        "--no-session-persistence"
+      ],
+      "stdin": true,
+      "env": []
+    },
+    "bash_host": {
+      "runner": "host",
+      "cmd": [
+        "bash"
+      ],
+      "stdin": true,
+      "env": []
+    },
+    "verible_format_host": {
+      "runner": "host",
+      "cmd": [
+        "bash",
+        "tools/verible_format.sh"
+      ],
+      "stdin": false,
+      "env": []
+    },
+    "opencode_host": {
+      "runner": "host",
+      "cmd": [
+        "opencode",
+        "run",
+        "-m",
+        "google/antigravity-gemini-3-pro",
+        "--variant",
+        "high"
+      ],
+      "stdin": true,
+      "env": [
+        "GEMINI_API_KEY",
+        "GOOGLE_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "OPENAI_API_KEY"
+      ]
+    },
+    "opencode_docker": {
+      "runner": "docker",
+      "image": "ai-cli:latest",
+      "cmd": [
+        "opencode",
+        "run",
+        "-m",
+        "google/antigravity-gemini-3-pro",
+        "--variant",
+        "high"
+      ],
+      "stdin": true,
+      "mounts": [
+        {
+          "source": "~/.opencode",
+          "target": "/home/node/.opencode",
+          "mode": "rw"
+        },
+        {
+          "source": "~/.config/opencode",
+          "target": "/home/node/.config/opencode",
+          "mode": "rw"
+        },
+        {
+          "source": "~/.local/share/opencode",
+          "target": "/home/node/.local/share/opencode",
+          "mode": "rw"
+        },
+        {
+          "source": "~/.local/state/opencode",
+          "target": "/home/node/.local/state/opencode",
+          "mode": "rw"
+        },
+        {
+          "source": "~/.cache/opencode",
+          "target": "/home/node/.cache/opencode",
+          "mode": "rw"
+        }
+      ],
+      "env": [
+        "GEMINI_API_KEY",
+        "GOOGLE_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "OPENAI_API_KEY"
+      ]
+    }
+  },
+  "workflows": {
+    "plan": [
+      "case_commit",
+      "case_branch",
+      "spec_normalizer",
+      "case_commit",
+      "req_testplan_generator",
+      "case_commit",
+      "spec_refiner",
+      "case_commit",
+      "req_testplan_generator",
+      "case_commit"
+    ],
+    "plan_v1": [
+      "case_commit",
+      "case_branch",
+      "spec_normalizer",
+      "case_commit",
+      "req_testplan_generator",
+      "case_commit",
+      "spec_refiner",
+      "case_commit",
+      "req_testplan_generator",
+      "case_commit"
+    ],
+    "implement": [
+      "case_branch",
+      "de_agent",
+      "case_commit",
+      "dv_agent",
+      "case_commit",
+      "code_formatter",
+      "case_commit",
+      "case_schedule_builder",
+      "testcase_validator",
+      "trace_matrix_builder",
+      "trace_matrix_schema_gate",
+      "trace_matrix_gate",
+      "run_bundle_snapshot",
+      "run_manifest_schema_gate",
+      "case_commit",
+      "sim_runner",
+      "verifier",
+      "regress_runner",
+      "case_commit",
+      "implement_contract_gate",
+      "pr_submit"
+    ],
+    "implement_v1": [
+      "case_branch",
+      "de_agent",
+      "case_commit",
+      "dv_agent",
+      "case_commit",
+      "code_formatter",
+      "case_commit",
+      "case_schedule_builder",
+      "testcase_validator",
+      "trace_matrix_builder",
+      "trace_matrix_schema_gate",
+      "trace_matrix_gate",
+      "run_bundle_snapshot",
+      "run_manifest_schema_gate",
+      "case_commit",
+      "sim_runner",
+      "verifier",
+      "regress_runner",
+      "case_commit",
+      "implement_contract_gate",
+      "pr_submit"
+    ],
+    "handoff_intake": [
+      "handoff_intake_validator",
+      "handoff_semantic_quota_gate",
+      "handoff_semantic_reviewer",
+      "handoff_acceptance_gate"
+    ],
+    "handoff_intake_v1": [
+      "handoff_intake_validator",
+      "handoff_semantic_quota_gate",
+      "handoff_semantic_reviewer",
+      "handoff_acceptance_gate"
+    ],
+    "incremental_verify_ready": [
+      "handoff_manifest_schema_gate",
+      "handoff_context_builder",
+      "case_schedule_builder",
+      "testcase_validator",
+      "trace_matrix_builder",
+      "trace_matrix_schema_gate",
+      "trace_matrix_gate",
+      "run_bundle_snapshot",
+      "run_manifest_schema_gate",
+      "incremental_sim_runner",
+      "verifier",
+      "regress_runner",
+      "incremental_compliance_gate",
+      "incremental_contract_gate"
+    ],
+    "incremental_verify_ready_v1": [
+      "handoff_manifest_schema_gate",
+      "handoff_context_builder",
+      "case_schedule_builder",
+      "testcase_validator",
+      "trace_matrix_builder",
+      "trace_matrix_schema_gate",
+      "trace_matrix_gate",
+      "run_bundle_snapshot",
+      "run_manifest_schema_gate",
+      "incremental_sim_runner",
+      "verifier",
+      "regress_runner",
+      "incremental_compliance_gate",
+      "incremental_contract_gate"
+    ]
+  },
+  "workflow_versions": {
+    "plan": "v1",
+    "implement": "v1",
+    "handoff_intake": "v1",
+    "incremental_verify_ready": "v1"
+  },
+  "roles": {
+    "spec_normalizer": {
+      "ai_cli": "codex_docker",
+      "task": "normalize_spec",
+      "prompt_file": "prompts/normalize_spec.txt",
+      "timeout": 1800,
+      "parameters": {
+        "input": "{inbox_spec_path}",
+        "output": "ai_cli_pipeline/specs/out/spec.md"
+      },
+      "outputs": {
+        "spec": "ai_cli_pipeline/specs/out/spec.md"
+      }
+    },
+    "spec_refiner": {
+      "ai_cli": "codex_docker",
+      "task": "refine_spec",
+      "prompt_file": "prompts/refine_spec.txt",
+      "timeout": 1200,
+      "parameters": {
+        "spec_file": "{spec_path}",
+        "testplan_file": "{testplan_path}"
+      },
+      "outputs": {
+        "testplan": "ai_cli_pipeline/specs/out/testplan.md"
+      }
+    },
+    "req_testplan_generator": {
+      "ai_cli": "gemini_docker",
+      "task": "generate_reqs_testplan",
+      "prompt_file": "prompts/generate_reqs_testplan.txt",
+      "timeout": 1800,
+      "parameters": {
+        "spec_file": "{spec_path}",
+        "reqs_output": "{reqs_path}",
+        "testplan_output": "{testplan_path}"
+      },
+      "outputs": {
+        "reqs": "ai_cli_pipeline/specs/out/reqs.md",
+        "testplan": "ai_cli_pipeline/specs/out/testplan.md"
+      }
+    },
+    "de_agent": {
+      "ai_cli": "gemini_docker",
+      "task": "generate_rtl",
+      "prompt_file": "prompts/generate_rtl.txt",
+      "timeout": 1200,
+      "parameters": {
+        "spec_file": "{spec_path}",
+        "reqs_file": "{reqs_path}",
+        "dut_output": "{rtl_path}",
+        "filelist_output": "{rtl_filelist_path}"
+      },
+      "outputs": {
+        "dut": "{rtl_path}",
+        "filelist": "{rtl_filelist_path}"
+      }
+    },
+    "dv_agent": {
+      "ai_cli": "gemini_docker",
+      "task": "generate_tb",
+      "prompt_file": "prompts/generate_tb.txt",
+      "timeout": 1200,
+      "parameters": {
+        "spec_file": "{spec_path}",
+        "testplan_file": "{testplan_path}",
+        "dut_output": "{rtl_path}",
+        "tb_output": "{tb_wrapper_path}",
+        "tb_py_output": "{tb_py_path}",
+        "test_output": "{test_path}"
+      },
+      "outputs": {
+        "tb_top": "{tb_wrapper_path}",
+        "tb_py": "{tb_py_path}",
+        "test_py": "{test_path}"
+      }
+    },
+    "code_formatter": {
+      "ai_cli": "verible_format_host",
+      "task": "format_code",
+      "prompt_file": "prompts/format_code.txt",
+      "parameters": {}
+    },
+    "testplan_dispatcher": {
+      "ai_cli": "gemini_docker",
+      "task": "dispatch_testplan",
+      "prompt_file": "prompts/dispatch_testplan.txt",
+      "timeout": 1200,
+      "parameters": {
+        "testplan_file": "{testplan_path}",
+        "spec_file": "{spec_path}",
+        "schedule_file": "artifacts/case_schedule.json"
+      }
+    },
+    "handoff_manifest_schema_gate": {
+      "ai_cli": "bash_host",
+      "task": "handoff_manifest_schema_gate",
+      "prompt_file": "prompts/schema_gate.sh",
+      "allow_fail": false,
+      "parameters": {
+        "input_json": "{handoff_manifest_path}",
+        "schema_json": "config/schemas/handoff_manifest.schema.json",
+        "label": "handoff-manifest"
+      }
+    },
+    "handoff_intake_validator": {
+      "ai_cli": "bash_host",
+      "task": "handoff_intake_validator",
+      "prompt_file": "prompts/handoff_intake_validator.sh",
+      "allow_fail": false,
+      "parameters": {
+        "handoff_root": "{handoff_root_path}",
+        "handoff_manifest": "{handoff_manifest_path}",
+        "source_requirements_root": "{source_requirements_root_path}",
+        "semantic_review_mode_value": "{semantic_review_mode}",
+        "out_dir": "{handoff_output_dir}",
+        "session_root": "{session_root_path}"
+      },
+      "outputs": {
+        "requirements_prompt": "{handoff_output_dir}/handoff_requirements_prompt.txt",
+        "inventory": "{handoff_output_dir}/handoff_inventory.json",
+        "audit": "{handoff_output_dir}/handoff_audit.json",
+        "source_index": "{handoff_output_dir}/handoff_source_index.json",
+        "contract_audit": "{handoff_output_dir}/handoff_contract_audit.json",
+        "gap_report": "{handoff_output_dir}/handoff_gap_report.md",
+        "repair_prompt": "{handoff_output_dir}/handoff_repair_prompt.txt",
+        "contract_repair_prompt": "{handoff_output_dir}/handoff_contract_repair_prompt.txt",
+        "semantic_review_request": "{handoff_output_dir}/handoff_semantic_review_request.md",
+        "candidate_manifest": "{handoff_output_dir}/handoff_manifest.candidate.json",
+        "materialization": "{handoff_output_dir}/handoff_materialization.json",
+        "materialized_manifest": "{handoff_output_dir}/handoff_manifest.materialized.json"
+      }
+    },
+    "handoff_semantic_quota_gate": {
+      "ai_cli": "bash_host",
+      "task": "handoff_semantic_quota_gate",
+      "prompt_file": "prompts/handoff_semantic_quota_gate.sh",
+      "allow_fail": false,
+      "parameters": {
+        "semantic_review_request": "{handoff_output_dir}/handoff_semantic_review_request.md",
+        "semantic_review_mode_value": "{semantic_review_mode}"
+      }
+    },
+    "handoff_semantic_reviewer": {
+      "ai_cli": "codex_host",
+      "task": "handoff_semantic_review",
+      "prompt_file": "prompts/handoff_semantic_review.txt",
+      "allow_fail": false,
+      "skip_if_missing": [
+        "semantic_review_request"
+      ],
+      "timeout": 1800,
+      "parameters": {
+        "semantic_review_request": "{handoff_output_dir}/handoff_semantic_review_request.md",
+        "semantic_review_json": "{handoff_output_dir}/handoff_semantic_review.json",
+        "semantic_review_md": "{handoff_output_dir}/handoff_semantic_review.md",
+        "semantic_repair_prompt": "{handoff_output_dir}/handoff_semantic_repair_prompt.txt",
+        "semantic_review_mode_value": "{semantic_review_mode}"
+      },
+      "outputs": {
+        "semantic_review": "{handoff_output_dir}/handoff_semantic_review.json",
+        "semantic_review_md": "{handoff_output_dir}/handoff_semantic_review.md",
+        "semantic_repair_prompt": "{handoff_output_dir}/handoff_semantic_repair_prompt.txt"
+      }
+    },
+    "handoff_acceptance_gate": {
+      "ai_cli": "bash_host",
+      "task": "handoff_acceptance_gate",
+      "prompt_file": "prompts/handoff_acceptance_gate.sh",
+      "allow_fail": false,
+      "parameters": {
+        "contract_audit": "{handoff_output_dir}/handoff_contract_audit.json",
+        "semantic_review": "{handoff_output_dir}/handoff_semantic_review.json",
+        "acceptance_json": "{handoff_output_dir}/handoff_acceptance.json",
+        "semantic_review_mode_value": "{semantic_review_mode}"
+      },
+      "outputs": {
+        "acceptance": "{handoff_output_dir}/handoff_acceptance.json"
+      }
+    },
+    "handoff_context_builder": {
+      "ai_cli": "bash_host",
+      "task": "build_handoff_context",
+      "prompt_file": "prompts/build_handoff_context.sh",
+      "allow_fail": false,
+      "parameters": {
+        "handoff_manifest": "{handoff_manifest_path}",
+        "handoff_context": "{handoff_context_path}",
+        "delivery_state": "verify_ready"
+      }
+    },
+    "case_schedule_builder": {
+      "ai_cli": "bash_host",
+      "task": "build_case_schedule",
+      "prompt_file": "prompts/build_case_schedule.sh",
+      "allow_fail": false,
+      "parameters": {
+        "testplan_file": "{testplan_path}",
+        "schedule_file": "{case_schedule_path}"
+      },
+      "fix_loop_config": {
+        "max_retries": 5,
+        "fixer_role": "req_testplan_generator",
+        "rerun_role": "case_schedule_builder"
+      }
+    },
+    "testcase_validator": {
+      "ai_cli": "bash_host",
+      "task": "validate_testcases",
+      "prompt_file": "prompts/validate_testcases.sh",
+      "allow_fail": false,
+      "parameters": {
+        "testplan_file": "{testplan_path}",
+        "schedule_file": "{case_schedule_path}",
+        "test_file": "{test_path}",
+        "report_file": "{testcase_validation_path}"
+      },
+      "fix_loop_config": {
+        "max_retries": 5,
+        "fixer_role": "testcase_fix_router",
+        "rerun_role": "testcase_validator"
+      }
+    },
+    "trace_matrix_builder": {
+      "ai_cli": "bash_host",
+      "task": "generate_trace_matrix",
+      "prompt_file": "prompts/generate_trace_matrix.sh",
+      "allow_fail": false,
+      "parameters": {
+        "reqs_file": "{reqs_path}",
+        "testplan_file": "{testplan_path}",
+        "test_file": "{test_path}",
+        "tb_wrapper_file": "{tb_wrapper_path}",
+        "rtl_file": "{rtl_path}",
+        "matrix_md": "{trace_matrix_md_path}",
+        "matrix_json": "{trace_matrix_json_path}"
+      }
+    },
+    "trace_matrix_schema_gate": {
+      "ai_cli": "bash_host",
+      "task": "trace_matrix_schema_gate",
+      "prompt_file": "prompts/schema_gate.sh",
+      "allow_fail": false,
+      "parameters": {
+        "input_json": "{trace_matrix_json_path}",
+        "schema_json": "config/schemas/trace_matrix.schema.json",
+        "label": "trace-matrix"
+      }
+    },
+    "trace_matrix_gate": {
+      "ai_cli": "bash_host",
+      "task": "trace_matrix_gate",
+      "prompt_file": "prompts/trace_matrix_gate.sh",
+      "allow_fail": false,
+      "parameters": {
+        "matrix_json": "{trace_matrix_json_path}"
+      }
+    },
+    "run_bundle_snapshot": {
+      "ai_cli": "bash_host",
+      "task": "materialize_run_bundle",
+      "prompt_file": "prompts/materialize_run_bundle.sh",
+      "allow_fail": false,
+      "parameters": {
+        "inbox_spec_file": "{inbox_spec_path}",
+        "spec_file": "{spec_path}",
+        "reqs_file": "{reqs_path}",
+        "testplan_file": "{testplan_path}",
+        "rtl_file": "{rtl_path}",
+        "tb_wrapper_file": "{tb_wrapper_path}",
+        "tb_py_file": "{tb_py_path}",
+        "test_file": "{test_path}",
+        "verify_report": "{verify_report_path}",
+        "matrix_md": "{trace_matrix_md_path}",
+        "matrix_json": "{trace_matrix_json_path}"
+      }
+    },
+    "run_manifest_schema_gate": {
+      "ai_cli": "bash_host",
+      "task": "run_manifest_schema_gate",
+      "prompt_file": "prompts/schema_gate.sh",
+      "allow_fail": false,
+      "parameters": {
+        "input_json": "artifacts/runs/{timestamp}/manifest.json",
+        "schema_json": "config/schemas/run_manifest.schema.json",
+        "label": "run-manifest"
+      }
+    },
+    "testcase_fix_router": {
+      "ai_cli": "bash_host",
+      "task": "testcase_fix_router",
+      "prompt_file": "prompts/testcase_fix_router.sh",
+      "allow_fail": true,
+      "parameters": {
+        "testplan_file": "{testplan_path}",
+        "schedule_file": "{case_schedule_path}",
+        "test_file": "{test_path}",
+        "report_file": "{testcase_validation_path}"
+      }
+    },
+    "sim_runner": {
+      "ai_cli": "bash_host",
+      "task": "run_sim",
+      "prompt_file": "prompts/run_sim.sh",
+      "allow_fail": false,
+      "drive_loop_from_file": "{case_schedule_path}",
+      "iteration_post_actions": [
+        "case_commit"
+      ],
+      "parameters": {
+        "top_level": "{toplevel_name}",
+        "rtl_filelist": "{sim_rtl_filelist_path}",
+        "test_module": "{test_module_name}",
+        "test_file": "{test_path}",
+        "testcase": "",
+        "error_logs": "{sim_fail_log_path}"
+      },
+      "fix_loop_config": {
+        "max_retries": 4,
+        "fixer_role": "sim_fixer",
+        "rerun_role": "sim_rerun",
+        "fallback_fixers": [
+          {
+            "max_retries": 1,
+            "fixer_role": "sim_fixer_gemini",
+            "rerun_role": "sim_rerun"
+          }
+        ]
+      },
+      "failure_actions": [
+        "sim_fail_summary",
+        "sim_fail_commit"
+      ],
+      "continue_on_fail": true,
+      "timeout": 1200
+    },
+    "incremental_sim_runner": {
+      "ai_cli": "bash_host",
+      "task": "run_sim",
+      "prompt_file": "prompts/run_sim.sh",
+      "allow_fail": false,
+      "drive_loop_from_file": "{case_schedule_path}",
+      "parameters": {
+        "top_level": "{toplevel_name}",
+        "rtl_filelist": "{sim_rtl_filelist_path}",
+        "test_module": "{test_module_name}",
+        "test_file": "{test_path}",
+        "testcase": "",
+        "error_logs": "{sim_fail_log_path}"
+      },
+      "fix_loop_config": {
+        "max_retries": 4,
+        "fixer_role": "sim_fixer",
+        "rerun_role": "incremental_sim_rerun",
+        "fallback_fixers": [
+          {
+            "max_retries": 1,
+            "fixer_role": "sim_fixer_gemini",
+            "rerun_role": "incremental_sim_rerun"
+          }
+        ]
+      },
+      "failure_actions": [
+        "sim_fail_summary"
+      ],
+      "continue_on_fail": true,
+      "timeout": 1200
+    },
+    "sim_rerun": {
+      "ai_cli": "bash_host",
+      "task": "run_sim_rerun",
+      "prompt_file": "prompts/run_sim.sh",
+      "allow_fail": false,
+      "parameters": {
+        "top_level": "{toplevel_name}",
+        "rtl_filelist": "{sim_rtl_filelist_path}",
+        "test_module": "{test_module_name}",
+        "test_file": "{test_path}",
+        "testcase": "",
+        "error_logs": "{sim_fail_log_path}"
+      }
+    },
+    "incremental_sim_rerun": {
+      "ai_cli": "bash_host",
+      "task": "run_sim_rerun",
+      "prompt_file": "prompts/run_sim.sh",
+      "allow_fail": false,
+      "parameters": {
+        "top_level": "{toplevel_name}",
+        "rtl_filelist": "{sim_rtl_filelist_path}",
+        "test_module": "{test_module_name}",
+        "test_file": "{test_path}",
+        "testcase": "",
+        "error_logs": "{sim_fail_log_path}"
+      }
+    },
+    "sim_fixer": {
+      "ai_cli": "claude_host",
+      "task": "fix_errors",
+      "prompt_file": "prompts/fix_errors_full_log.txt",
+      "parameters": {
+        "error_logs": "{sim_fail_log_path}",
+        "fix_notes": "{fix_notes_sim_path}",
+        "dut_file": "{rtl_path}",
+        "tb_file": "{tb_wrapper_path}",
+        "tb_py_file": "{tb_py_path}",
+        "test_file": "{test_path}",
+        "filelist_file": "{rtl_filelist_path}"
+      },
+      "timeout": 900
+    },
+    "sim_fixer_codex": {
+      "ai_cli": "codex_docker",
+      "task": "fix_errors_codex",
+      "prompt_file": "prompts/fix_errors_full_log.txt",
+      "parameters": {
+        "error_logs": "{sim_fail_log_path}",
+        "fix_notes": "{fix_notes_sim_path}",
+        "dut_file": "{rtl_path}",
+        "tb_file": "{tb_wrapper_path}",
+        "tb_py_file": "{tb_py_path}",
+        "test_file": "{test_path}",
+        "filelist_file": "{rtl_filelist_path}"
+      }
+    },
+    "sim_fixer_gemini": {
+      "ai_cli": "gemini_docker",
+      "task": "fix_errors_gemini",
+      "prompt_file": "prompts/fix_errors_full_log.txt",
+      "parameters": {
+        "error_logs": "{sim_fail_log_path}",
+        "fix_notes": "{fix_notes_sim_path}",
+        "dut_file": "{rtl_path}",
+        "tb_file": "{tb_wrapper_path}",
+        "tb_py_file": "{tb_py_path}",
+        "test_file": "{test_path}",
+        "filelist_file": "{rtl_filelist_path}"
+      }
+    },
+    "case_commit": {
+      "ai_cli": "bash_host",
+      "task": "commit_case",
+      "prompt_file": "prompts/commit_case.sh",
+      "parameters": {}
+    },
+    "sim_fail_summary": {
+      "ai_cli": "codex_host",
+      "task": "summarize_sim_fail",
+      "prompt_file": "prompts/sim_fail_summary.txt",
+      "parameters": {
+        "error_logs": "{sim_fail_log_path}",
+        "summary_file": "{sim_failures_dir}/{case_id}.md",
+        "top_level": "{toplevel_name}",
+        "test_module": "{test_module_name}",
+        "rtl_filelist": "{sim_rtl_filelist_path}"
+      }
+    },
+    "sim_fail_commit": {
+      "ai_cli": "bash_host",
+      "task": "commit_sim_fail",
+      "prompt_file": "prompts/commit_failure.sh",
+      "parameters": {
+        "summary_file": "{sim_failures_dir}/{case_id}.md"
+      }
+    },
+    "verifier": {
+      "ai_cli": "claude_docker",
+      "task": "verify",
+      "continue_on_fail": true,
+      "prompt_file": "prompts/verify.txt",
+      "parameters": {
+        "spec_file": "{spec_path}",
+        "reqs_file": "{reqs_path}",
+        "dut_file": "{rtl_path}",
+        "tb_file": "{tb_wrapper_path}",
+        "tb_py_file": "{tb_py_path}",
+        "test_file": "{test_path}",
+        "verify_report": "{verify_report_path}",
+        "verify_script": "{verify_script_path}",
+        "top_level": "{toplevel_name}",
+        "rtl_filelist": "{sim_rtl_filelist_path}",
+        "test_module": "{test_module_name}",
+        "testcase": "{smoke_testcase_name}"
+      },
+      "timeout": 1200
+    },
+    "regress_runner": {
+      "ai_cli": "bash_host",
+      "task": "run_regress",
+      "prompt_file": "prompts/run_regress.sh",
+      "allow_fail": false,
+      "continue_on_fail": true,
+      "parameters": {
+        "top_level": "{toplevel_name}",
+        "rtl_filelist": "{sim_rtl_filelist_path}",
+        "regr_modules": "{regression_modules}",
+        "regr_seeds": "",
+        "regr_out": "",
+        "error_logs": "{regress_fail_log_path}"
+      },
+      "fix_loop_config": {
+        "max_retries": 3,
+        "fixer_role": "regress_fixer",
+        "rerun_role": "regress_rerun"
+      },
+      "timeout": 3600
+    },
+    "regress_rerun": {
+      "ai_cli": "bash_host",
+      "task": "run_regress_rerun",
+      "prompt_file": "prompts/run_regress.sh",
+      "allow_fail": false,
+      "parameters": {
+        "top_level": "{toplevel_name}",
+        "rtl_filelist": "{sim_rtl_filelist_path}",
+        "regr_modules": "{regression_modules}",
+        "regr_seeds": "",
+        "regr_out": "",
+        "error_logs": "{regress_fail_log_path}"
+      }
+    },
+    "regress_fixer": {
+      "ai_cli": "claude_host",
+      "task": "fix_errors",
+      "prompt_file": "prompts/fix_errors.txt",
+      "parameters": {
+        "error_logs": "{regress_fail_log_path}",
+        "fix_notes": "{fix_notes_regress_path}",
+        "dut_file": "{rtl_path}",
+        "tb_file": "{tb_wrapper_path}",
+        "tb_py_file": "{tb_py_path}",
+        "test_file": "{test_path}",
+        "filelist_file": "{rtl_filelist_path}"
+      },
+      "timeout": 900
+    },
+    "case_branch": {
+      "ai_cli": "bash_host",
+      "task": "prepare_case_branch",
+      "prompt_file": "prompts/prepare_branch.sh",
+      "parameters": {}
+    },
+    "pr_submit": {
+      "ai_cli": "bash_host",
+      "task": "pr_submit",
+      "enabled": true,
+      "prompt_file": "prompts/pr_submit.sh",
+      "timeout": 1200,
+      "parameters": {
+        "verify_report": "{verify_report_path}",
+        "failures_dir": "{sim_failures_dir}"
+      }
+    },
+    "incremental_compliance_gate": {
+      "ai_cli": "bash_host",
+      "task": "incremental_compliance_gate",
+      "prompt_file": "prompts/incremental_compliance_gate.sh",
+      "allow_fail": false,
+      "parameters": {
+        "handoff_context": "{handoff_context_path}",
+        "out_json": "{incremental_compliance_out_path}"
+      }
+    },
+    "implement_contract_gate": {
+      "ai_cli": "bash_host",
+      "prompt_file": "prompts/must_call_gate.sh",
+      "parameters": {
+        "workflow": "implement",
+        "contract_json": "config/implement_contract.json",
+        "log_dir": "ai_cli_pipeline/logs",
+        "out_json": "{implement_contract_out_path}"
+      }
+    },
+    "incremental_contract_gate": {
+      "ai_cli": "bash_host",
+      "prompt_file": "prompts/must_call_gate.sh",
+      "parameters": {
+        "workflow": "incremental_verify_ready",
+        "contract_json": "config/implement_contract.json",
+        "log_dir": "ai_cli_pipeline/logs",
+        "out_json": "{incremental_contract_out_path}"
+      }
+    }
+  },
+  "execution_order": [
+    "case_branch",
+    "spec_normalizer",
+    "req_testplan_generator",
+    "spec_refiner",
+    "req_testplan_generator",
+    "de_agent",
+    "dv_agent",
+    "code_formatter",
+    "case_schedule_builder",
+    "testcase_validator",
+    "trace_matrix_builder",
+    "trace_matrix_schema_gate",
+    "trace_matrix_gate",
+    "run_bundle_snapshot",
+    "run_manifest_schema_gate",
+    "handoff_manifest_schema_gate",
+    "handoff_context_builder",
+    "sim_runner",
+    "incremental_sim_runner",
+    "verifier",
+    "regress_runner",
+    "incremental_compliance_gate",
+    "incremental_contract_gate",
+    "pr_submit"
+  ]
+}

@@ -1,0 +1,10 @@
+.git/
+.runner_logs/
+artifacts/
+cocotb_ex/artifacts/
+cocotb_ex/sim/out/
+cocotb_ex/sim/sim_build/
+cocotb_vcs/out/
+**/__pycache__/
+**/*.pyc
+*.log

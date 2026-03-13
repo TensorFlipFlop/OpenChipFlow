@@ -1,0 +1,26 @@
+{
+  "schema_version": "output_contract/v1",
+  "directories": [
+    "artifacts/runs/<run_id>/inputs",
+    "artifacts/runs/<run_id>/derived",
+    "artifacts/runs/<run_id>/outputs",
+    "artifacts/runs/<run_id>/verification"
+  ],
+  "reports": {
+    "trace": {
+      "path": "ai_cli_pipeline/verification/req_trace_matrix.json",
+      "schema": "config/schemas/trace_matrix.schema.json",
+      "schema_version": "trace_matrix/v1"
+    },
+    "manifest": {
+      "path": "artifacts/runs/<run_id>/manifest.json",
+      "schema": "config/schemas/run_manifest.schema.json",
+      "schema_version": "run_manifest/v1"
+    },
+    "verify": {
+      "path": "ai_cli_pipeline/verification/verify.md",
+      "format": "markdown",
+      "schema_version": "verify_report/v1"
+    }
+  }
+}

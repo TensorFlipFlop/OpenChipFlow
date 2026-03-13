@@ -1,0 +1,18 @@
+#!/bin/bash
+set -euo pipefail
+
+STAGED_SV_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.sv$|\.svh$' || true)
+
+if [[ -n "$STAGED_SV_FILES" ]]; then
+    echo "[pre-commit] Checking formatting for SystemVerilog files..."
+    for file in $STAGED_SV_FILES; do
+        verible-verilog-format --inplace "$file"
+        if ! git diff --exit-code "$file" > /dev/null 2>&1; then
+            echo "[pre-commit] ERROR: File '$file' is not formatted. We have formatted it for you."
+            echo "[pre-commit] Please run 'git add $file' and try committing again."
+            exit 1
+        fi
+    done
+    echo "[pre-commit] Formatting check passed."
+fi
+exit 0

@@ -1,0 +1,35 @@
+You are working in the repository root (current working directory).
+Do not prefix paths with "cocotb_ex/".
+
+If {error_logs} does not exist or is empty, write a short note to {summary_file} and do not change any other files.
+
+Otherwise, use the log excerpt below (do not open the full log) and write a failure summary to {summary_file}.
+
+=== START OF LOG EXCERPT ===
+{log_content}
+=== END OF LOG EXCERPT ===
+
+The summary must include:
+- case_id: {case_id}
+- case_ids: {case_ids} (use "n/a" if empty)
+- testcase: {testcase} (use "n/a" if empty)
+- short error summary (1-3 sentences)
+- key log excerpt (up to 20 lines)
+- likely root cause
+- suggested next step
+- reproduction command
+
+**Style Constraint**: Use objective language (e.g., "The error is caused by...", "Signal X failed to toggle"). Do NOT use "I", "you", "we", or conversational filler.
+
+**Reproduction Command**:
+Provide a single-line command to reproduce this specific failure with waveforms enabled.
+Use the following template:
+`make sim TOPLEVEL={top_level} RTL_FILELISTS={rtl_filelist} MODULE={test_module} TESTCASE={testcase} WAVES=1`
+(Ensure the parameters match the configuration provided).
+
+Create the parent directory for {summary_file} if needed.
+Overwrite {summary_file}.
+Use ASCII only.
+Do NOT change directory (cd).
+Do not modify any other files.
+Do not output any extra text.

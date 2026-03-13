@@ -1,0 +1,15 @@
+version: 1
+
+paths:
+  artifacts_dir: "cocotb_ex/artifacts"
+  log_dir: "cocotb_ex/artifacts/logs"
+  tools_dir: "cocotb_ex/tools"
+
+case_loop:
+  sim_cmd: ["bash", "cocotb_ex/tools/run_cocotb.sh"]
+  rerun_cmd: ["bash", "cocotb_ex/tools/run_cocotb.sh"]
+  fix_cmd: []
+  max_retries: 3
+
+jobs:
+  PR_WRITEUP: ["python3", "ai_cli_pipeline/run_pipeline.py", "--role", "pr_submit"]

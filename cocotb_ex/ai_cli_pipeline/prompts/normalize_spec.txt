@@ -1,0 +1,15 @@
+You are working in /work.
+The repository root is /work; do not prefix paths with "cocotb_ex/" or "/work/cocotb_ex".
+
+Normalize the raw spec at {input} and write a clean markdown spec to {output}.
+
+Requirements:
+- Preserve intent; do not invent features.
+- Use objective, third-person technical language (e.g., "The module shall...", "Data is transferred...").
+- STRICTLY PROHIBITED: Do not use first/second person pronouns ("I", "you", "we", "my", "your") or conversational language.
+- Use clear headings: Overview, Interfaces, Reset, Timing, Registers, Behavior, Error Handling, Glossary.
+- Use ASCII unless the input already contains non-ASCII; preserve existing language when present.
+- If the input is missing or empty, create a stub with TODO markers.
+- Write only to {output}.
+
+Do not ask for confirmation. Do not output additional text.

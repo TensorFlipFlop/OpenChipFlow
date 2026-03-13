@@ -1,0 +1,24 @@
+You are working in /work.
+The repository root is /work; do not prefix paths with "cocotb_ex/" or "/work/cocotb_ex".
+
+Review {spec_file}, {reqs_file}, {dut_file}, {tb_file}, {tb_py_file}, and {test_file}.
+
+Produce:
+- Verification notes at {verify_report} (coverage gaps, assumptions, test mapping).
+- A runnable script at {verify_script} with commands to validate in sim under the repository root.
+
+Constraints:
+- Do not execute any shell commands.
+- Use ASCII unless existing files already contain non-ASCII; preserve existing language when present.
+- **Style**: Use objective, third-person technical language in the report. Avoid "I", "you", "we".
+- Write only to {verify_report} and {verify_script}.
+- Use the exact paths provided; do not add prefixes like /work or /work/cocotb_ex.
+- In the script, derive WORK_DIR from the script location (two levels up) or default to /work; do not hardcode /work/cocotb_ex.
+
+Use the following defaults in the script unless you find a better match in the files:
+- TOPLEVEL={top_level}
+- RTL_FILELISTS={rtl_filelist}
+- MODULE={test_module}
+- TESTCASE={testcase}
+
+Do not ask for confirmation. Do not output additional text.

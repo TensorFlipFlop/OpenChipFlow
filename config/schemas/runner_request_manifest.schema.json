@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-chip-flow.local/schemas/runner_request_manifest.schema.json",
+  "title": "Runner Request Manifest",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "mode"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "runner_request_manifest/v1"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["spec_flow", "handoff_intake", "incremental_verify_ready"]
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "command": { "type": "string" },
+        "target": { "type": "string" },
+        "mode": { "type": "string" },
+        "dry_run": { "type": "boolean" }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "model": { "type": ["string", "null"] },
+        "variant": { "type": ["string", "null"] },
+        "thinking": { "type": ["string", "null"] }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "spec_source": { "$ref": "#/$defs/inputEntry" },
+        "handoff_root": { "$ref": "#/$defs/inputEntry" },
+        "handoff_manifest": { "$ref": "#/$defs/inputEntry" },
+        "source_requirements_root": { "$ref": "#/$defs/inputEntry" },
+        "target_state": { "type": ["string", "null"] },
+        "semantic_review_mode": { "type": ["string", "null"], "enum": ["off", "auto", "required", null] },
+        "backend_policy": {}
+      }
+    }
+  },
+  "$defs": {
+    "inputEntry": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "path": { "type": "string" },
+            "content": { "type": "string" },
+            "filename": { "type": "string" },
+            "kind": { "type": "string", "enum": ["file", "directory"] },
+            "import_mode": { "type": "string", "enum": ["reference", "snapshot"] }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,31 @@
+version: 1
+
+tb_root: "cocotb_ex/tb"
+
+tb_levels:
+  - name: "TB3"
+    description: "Scoreboards/assertions/reference models."
+    patterns:
+      - "cocotb_ex/tb/*score*"
+      - "cocotb_ex/tb/*assert*"
+      - "cocotb_ex/tb/*check*"
+      - "cocotb_ex/tb/*ref*"
+      - "cocotb_ex/tb/*golden*"
+  - name: "TB2"
+    description: "Testbench code and reusable helpers."
+    patterns:
+      - "cocotb_ex/tb/*.py"
+  - name: "TB1"
+    description: "HDL wrapper/top-level TB files."
+    patterns:
+      - "cocotb_ex/tb/hdl/*.sv"
+
+audit:
+  assertions:
+    min_delta: 0
+  skips:
+    max_delta: 0
+  xfails:
+    max_delta: 0
+  case_count:
+    min_delta: 0

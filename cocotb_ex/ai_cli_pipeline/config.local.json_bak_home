@@ -1,0 +1,21 @@
+{
+  "roles": {
+    "req_testplan_generator": { "ai_cli": "claude" },
+    "dv_agent": { "ai_cli": "claude" },
+    "testplan_dispatcher": { "ai_cli": "claude" },
+    "sim_runner": {
+      "fix_loop_config": {
+        "max_retries": 5,
+        "fixer_role": "sim_fixer",
+        "rerun_role": "sim_rerun",
+        "fallback_fixers": [
+          {
+            "max_retries": 1,
+            "fixer_role": "sim_fixer_gemini",
+            "rerun_role": "sim_rerun"
+          }
+        ]
+      }
+    }
+  }
+}

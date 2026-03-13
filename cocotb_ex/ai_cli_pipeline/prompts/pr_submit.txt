@@ -1,0 +1,13 @@
+This prompt is deprecated.
+
+PR submission now uses fixed shell gates:
+- `cocotb_ex/ai_cli_pipeline/prompts/pr_submit.sh`
+- `tools/pr_submit.sh`
+
+Gate checks include:
+- branch gate
+- commit gate
+- push gate
+- PR URL gate
+
+No external skill is required.

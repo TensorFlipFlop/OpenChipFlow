@@ -1,0 +1,34 @@
+version: 1
+
+classes:
+  SYNTAX:
+    - "syntax error"
+    - "Parse Error"
+    - "unexpected token"
+    - "Error-[SE]"
+
+  LINT:
+    - "verible"
+    - "lint"
+    - "style violation"
+
+  RUNTIME:
+    - "RuntimeError"
+    - "Traceback"
+    - "Segmentation fault"
+    - "core dumped"
+
+  LOGIC:
+    - "assert"
+    - "mismatch"
+    - "expected"
+    - "got"
+    - "FAILED"
+
+  INFRA:
+    - "not found"
+    - "permission denied"
+    - "No space left"
+    - "network"
+
+fallback: UNKNOWN

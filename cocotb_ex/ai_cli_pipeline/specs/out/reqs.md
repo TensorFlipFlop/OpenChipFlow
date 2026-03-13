@@ -1,0 +1,30 @@
+# CDC Stream Packer Requirements
+
+- `REQ-001`: 默认参数值必须为 `IN_W = 1`、`OUT_W = 2`、`PACK_ORDER = 0`。
+- `REQ-002`: 合法参数组合必须同时满足 `IN_W >= 1`、`OUT_W = 2 * IN_W`、`PACK_ORDER` 只能取 `0` 或 `1`。
+- `REQ-003`: 非法参数组合必须在 elaboration 阶段被拒绝，或在仿真/综合初始阶段报告 fatal 配置错误；实现不得以静默截断、隐式重映射或未定义输出继续工作。
+- `REQ-004`: 顶层端口名必须精确为 `clk1`、`clk1_rst_n`、`data_in`、`data_in_valid`、`clk1_ready`、`clk2`、`clk2_rst_n`、`data_out`、`data_out_valid`、`clk2_ready`；其中 `data_in` 位宽必须为 `IN_W`，`data_out` 位宽必须为 `OUT_W`。
+- `REQ-005`: DUT 作用域内必须保留并允许层次读取以下命名状态与命名信号：`a_reg[IN_W-1:0]`、`have_a`、`hold_word[OUT_W-1:0]`、`hold_valid`、`out_data_reg[OUT_W-1:0]`、`out_valid_reg`、`clk1_ready`、`data_out[OUT_W-1:0]`、`data_out_valid`、`af_wrclk`、`af_wr_rst_n`、`af_wr_data[OUT_W-1:0]`、`af_wr_valid`、`af_wr_ready`、`af_rd_clk`、`af_rd_rst_n`、`af_rd_data[OUT_W-1:0]`、`af_rd_valid`、`af_rd_ready`。
+- `REQ-006`: 内部 CDC 接口必须满足 `af_wrclk = clk1`、`af_wr_rst_n = clk1_rst_n`、`af_rd_clk = clk2`、`af_rd_rst_n = clk2_rst_n`。
+- `REQ-007`: 当对应复位被断言为 `0` 时，`a_reg`、`have_a`、`hold_word`、`hold_valid`、`out_data_reg`、`out_valid_reg` 的复位值必须分别为全 `0`、`0`、全 `0`、`0`、全 `0`、`0`。
+- `REQ-008`: 当 `clk1_rst_n = 0` 时，不得发生有效 `in_fire` 或 `wr_fire`；未完成半包与尚未写入 `afifo` 的 `hold_word` 必须立即失效；`clk1` 复位前后被接受的 beat 不得组合成同一个输出 word。
+- `REQ-009`: 当 `clk2_rst_n = 0` 时，不得发生有效 `rd_fire` 或 `out_fire`；`data_out` 必须为全 `0`，`data_out_valid` 必须为 `0`；复位释放后，`data_out_valid` 只能在装载新的完整 word 后重新置为 `1`。
+- `REQ-010`: 输入 beat 只能在 `in_fire` 条件成立时被接受；任何未满足 `in_fire` 的 `data_in` 变化都不得影响后续输出序列。
+- `REQ-011`: 当 `have_a = 0` 且发生 `in_fire` 时，当前 beat 必须写入 `a_reg`，并将 `have_a` 置为 `1`。
+- `REQ-012`: 当 `have_a = 1` 且发生 `in_fire` 时，当前 beat 必须与 `a_reg` 组成完整 word，并将 `have_a` 清为 `0`。
+- `REQ-013`: 当 `PACK_ORDER = 0` 时，完整 word 必须按 `{a_reg, b}` 拼接，其中高 `IN_W` 位对应第 `1` 个被接受 beat，低 `IN_W` 位对应第 `2` 个被接受 beat。
+- `REQ-014`: 当 `PACK_ORDER = 1` 时，完整 word 必须按 `{b, a_reg}` 拼接，其中高 `IN_W` 位对应第 `2` 个被接受 beat，低 `IN_W` 位对应第 `1` 个被接受 beat。
+- `REQ-015`: 若输入序列以单个未配对的被接受 beat 结束，该 beat 必须持续保留在 `a_reg` 中且 `have_a` 保持为 `1`，直到匹配的第 `2` 个 beat 被接受或 `clk1_rst_n = 0`；实现不得自动补零、自动 flush、自动丢弃，或输出仅由单个 beat 形成的不完整 word。
+- `REQ-016`: 写侧组合关系必须满足 `af_wr_valid = hold_valid || gen_valid`，且 `af_wr_data = hold_valid ? hold_word : gen_packed_word`。
+- `REQ-017`: 当 `hold_valid = 1` 时，`hold_word` 必须优先于同拍新生成完整 word 发送到 `afifo`；若 `hold_word` 在 `wr_fire` 中被发送，`hold_valid` 必须清为 `0`；若同拍新生成完整 word 未被写入 `afifo`，该完整 word 必须写入 `hold_word` 并将 `hold_valid` 置为 `1`；新生成完整 word 不得越过更早生成的 `hold_word`。
+- `REQ-018`: `clk1_ready` 必须满足 `clk1_ready = (have_a == 0) ? 1 : (hold_valid == 0)`；当 `have_a = 1 && hold_valid = 1` 时，模块不得再接受会形成另一完整 word 的第 `2` 个 beat。
+- `REQ-019`: `afifo` 必须保证每个 `wr_fire` 提交的完整 word 以相同顺序出现在读侧，且不得复制、丢弃或重排；`afifo` 内部存储容量必须至少为 `1` 个完整 word。
+- `REQ-020`: 输出映射必须满足 `data_out = out_data_reg` 且 `data_out_valid = out_valid_reg`。
+- `REQ-021`: 读侧就绪条件必须满足 `af_rd_ready = (!out_valid_reg) || (out_valid_reg && clk2_ready)`。
+- `REQ-022`: 当 `rd_fire = 1` 时，`af_rd_data` 必须装载到 `out_data_reg`，并将 `out_valid_reg` 置为 `1`；当当前输出在本拍被消费且未发生 `rd_fire` 时，`out_valid_reg` 必须清为 `0`；当当前输出在本拍被消费且同时发生 `rd_fire` 时，必须在同拍完成 refill 且 `out_valid_reg` 必须保持为 `1`。
+- `REQ-023`: 当 `data_out_valid = 1 && clk2_ready = 0` 时，`data_out` 与 `data_out_valid` 必须保持稳定，直到发生 `out_fire` 或 `clk2_rst_n = 0`。
+- `REQ-024`: 仅满足 `in_fire` 的 beat 才计入输入序列；每连续 `2` 个被接受 beat 必须对应且仅对应 `1` 个输出 word；输出 word 顺序必须与输入 beat 的接受顺序一致；模块不得重复输出、跳过输出或重排输出 word。
+- `REQ-025`: 当 `clk2_ready` 间歇或持续为 `0` 导致输出侧停滞时，模块必须通过 `clk1_ready` 向上游施加反压，并且必须在任何已接受数据会被覆盖前完成限流；若 `clk2_ready` 后续重新返回 `1` 且期间无进一步复位，所有已被接受且已组成完整 word 的数据必须最终按序排空。
+- `REQ-026`: 当第 `2` 个 beat 被接受并形成新的完整 word，且当前不存在更早生成而尚未发送的 `hold_word` 占用写路径时，该完整 word 必须在同一个 `clk1` 周期驱动到 `af_wr_data`，并通过 `af_wr_valid` 对 `afifo` 可见。
+- `REQ-027`: 当当前输出 word 在某个 `clk2` 周期被消费且 `afifo` 在同一周期同时提供下一完整 word 时，模块必须在同拍完成 refill，且 `data_out_valid` 不得出现内部空泡。
+- `REQ-028`: 在默认工作点 `IN_W = 1`、`OUT_W = 2`、`clk1 = 100 MHz`、`clk2 = 50 MHz` 且 `clk2_ready` 持续为 `1` 的条件下，模块必须支持输入端按 `clk1` 每拍接受 `1` 个 beat 的持续传输；在首个输出 word 有效之后，输出端必须按 `clk2` 每拍提供 `1` 个有效 word，且不得出现内部气泡、数据丢失或数据重排。

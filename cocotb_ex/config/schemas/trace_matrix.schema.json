@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-chip-flow.local/schemas/trace_matrix.schema.json",
+  "title": "REQ Trace Matrix",
+  "type": "object",
+  "required": ["schema_version", "summary", "requirements", "testcases", "debug_signal_map"],
+  "additionalProperties": true,
+  "properties": {
+    "schema_version": { "type": "string", "const": "trace_matrix/v1" },
+    "summary": {
+      "type": "object",
+      "required": ["requirements", "ok", "no_testplan", "missing_test_impl", "no_signal_link"],
+      "additionalProperties": true,
+      "properties": {
+        "requirements": { "type": "integer", "minimum": 0 },
+        "ok": { "type": "integer", "minimum": 0 },
+        "no_testplan": { "type": "integer", "minimum": 0 },
+        "missing_test_impl": { "type": "integer", "minimum": 0 },
+        "no_signal_link": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "req_id",
+          "requirement",
+          "test_ids",
+          "testcases",
+          "tb_signals",
+          "rtl_signals",
+          "missing_test_impl",
+          "status"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "req_id": { "type": "string", "pattern": "^REQ-\\d+$" },
+          "requirement": { "type": "string" },
+          "test_ids": { "type": "array", "items": { "type": "string" } },
+          "testcases": { "type": "array", "items": { "type": "string" } },
+          "tb_signals": { "type": "array", "items": { "type": "string" } },
+          "rtl_signals": { "type": "array", "items": { "type": "string" } },
+          "missing_test_impl": { "type": "array", "items": { "type": "string" } },
+          "status": {
+            "type": "string",
+            "enum": ["OK", "NO_TESTPLAN", "MISSING_TEST_IMPL", "NO_SIGNAL_LINK"]
+          }
+        }
+      }
+    },
+    "testcases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["test_id", "testcase", "req_ids", "tb_signals", "rtl_signals", "implemented"],
+        "additionalProperties": true,
+        "properties": {
+          "test_id": { "type": "string" },
+          "testcase": { "type": "string" },
+          "req_ids": { "type": "array", "items": { "type": "string", "pattern": "^REQ-\\d+$" } },
+          "tb_signals": { "type": "array", "items": { "type": "string" } },
+          "rtl_signals": { "type": "array", "items": { "type": "string" } },
+          "implemented": { "type": "boolean" }
+        }
+      }
+    },
+    "debug_signal_map": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

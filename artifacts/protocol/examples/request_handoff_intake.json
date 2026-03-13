@@ -1,0 +1,22 @@
+{
+  "schema_version": "runner_request_manifest/v1",
+  "session_id": "example_handoff_intake",
+  "mode": "handoff_intake",
+  "execution": {
+    "dry_run": false
+  },
+  "inputs": {
+    "handoff_root": {
+      "path": "cocotb_ex/ai_cli_pipeline/examples/incremental_manifestless",
+      "import_mode": "snapshot",
+      "kind": "directory"
+    },
+    "source_requirements_root": {
+      "path": "cocotb_ex/ai_cli_pipeline/examples/incremental_manifestless/source_requirements",
+      "import_mode": "snapshot",
+      "kind": "directory"
+    },
+    "target_state": "verify_ready",
+    "semantic_review_mode": "off"
+  }
+}

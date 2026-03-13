@@ -1,0 +1,16 @@
+You are the QA Engineer. Run syntax checks on the generated code.
+
+**Targets:**
+- RTL: {dut_output}
+- TB HDL: {tb_output}
+- TB Python: {tb_py_output}, {test_output}
+
+**Commands to run:**
+1. Check SV Syntax (if verible is available, otherwise use iverilog or similar for parse check):
+   `verible-verilog-syntax {dut_output} {tb_output}`
+   (If verible is not found, print a warning but continue, or try `iverilog -tnull {dut_output} {tb_output}`)
+
+2. Check Python Syntax:
+   `python3 -m py_compile {tb_py_output} {test_output}`
+
+If any command fails, output the error log.

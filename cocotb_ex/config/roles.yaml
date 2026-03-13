@@ -1,0 +1,22 @@
+version: 1
+
+roles:
+  Designer:
+    tier: "T0"
+    description: "Generate/modify RTL (DUT) with verification-friendly output."
+    prompt_profile: "prompts/designer.md"
+
+  Verifier:
+    tier: "T0"
+    description: "Generate/modify cocotb_ex/tb verification code and tests."
+    prompt_profile: "prompts/verifier.md"
+
+  Referee:
+    tier: "T2"
+    description: "Decide DUT vs TB-3 changes, issue permits, require regressions."
+    prompt_profile: "prompts/referee.md"
+
+optional_roles:
+  PRWriter:
+    tier: "T0"
+    prompt_profile: "prompts/prwriter.md"

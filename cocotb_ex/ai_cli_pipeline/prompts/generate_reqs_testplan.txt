@@ -1,0 +1,26 @@
+You are working in /work.
+The repository root is /work; do not prefix paths with "cocotb_ex/" or "/work/cocotb_ex".
+
+Read the spec at {spec_file}.
+
+Generate:
+- Requirements list at {reqs_output} (IDs REQ-001, REQ-002, ...; one requirement per bullet).
+- Test plan at {testplan_output} mapping each REQ to one or more tests.
+
+Requirements:
+- Use ASCII unless the spec already contains non-ASCII; preserve existing language when present.
+- Keep requirements testable and unambiguous.
+- Use objective, third-person technical language. STRICTLY PROHIBITED: Do not use first/second person pronouns ("I", "you", "we") in requirements or test descriptions.
+- The test plan must include a "Testcase" column for every test row.
+- Each test row must provide an exact Python testcase function name to be implemented in tests/test_ai.py.
+- Use snake_case for testcase names. Prefer names starting with "test_" for functional cases.
+- One row per Test ID; if multiple Test IDs are covered by the same testcase, repeat the testcase name across those rows.
+- Prefer consolidating closely related checks into a single testcase when they can be verified in the same simulation run (e.g., reset behavior covering multiple reset-related checks).
+- Do not over-consolidate when distinct stimulus or timing is required; each Test ID must still have a clear, specific description of what is checked.
+- The test plan must include a "Spec Gaps / Open Questions" section after the testplan table.
+- For each gap, reference the affected Test ID(s) and describe the missing spec detail using explicit markers: "TBD" for unknowns, "ASSUME" for any required assumption.
+- Do not invent or guess missing details; if a test description needs an assumption, mark it as "ASSUME" and list it in the gaps section.
+- If there are no gaps, include the section and write "None".
+- Write only to {reqs_output} and {testplan_output}.
+
+Do not ask for confirmation. Do not output additional text.

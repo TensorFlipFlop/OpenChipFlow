@@ -1,0 +1,1292 @@
+{
+  "schema_version": "trace_matrix/v1",
+  "summary": {
+    "requirements": 23,
+    "ok": 23,
+    "no_testplan": 0,
+    "missing_test_impl": 0,
+    "no_signal_link": 0
+  },
+  "requirements": [
+    {
+      "req_id": "REQ-001",
+      "requirement": "The module shall accept input data on the clk1 domain with data_in_valid handshake and assert clk1_ready when ready to accept data.",
+      "test_ids": [
+        "T-001"
+      ],
+      "testcases": [
+        "test_input_ready_behavior"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-002",
+      "requirement": "The module shall pack two input beats into one output word according to the PACK_ORDER parameter: - PACK_ORDER=0: Output {beat_a, beat_b} - PACK_ORDER=1: Output {beat_b, beat_a}",
+      "test_ids": [
+        "T-003"
+      ],
+      "testcases": [
+        "test_packing_both_orders"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-003",
+      "requirement": "The module shall transfer packed words from the clk1 domain to the clk2 domain through an asynchronous FIFO.",
+      "test_ids": [
+        "T-012"
+      ],
+      "testcases": [
+        "test_sustained_full_rate_transfer"
+      ],
+      "tb_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-004",
+      "requirement": "The module shall present output data on the clk2 domain with data_out_valid handshake and wait for clk2_ready before releasing the output.",
+      "test_ids": [
+        "T-012"
+      ],
+      "testcases": [
+        "test_sustained_full_rate_transfer"
+      ],
+      "tb_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-005",
+      "requirement": "The module shall support independent asynchronous active-low resets for each clock domain (clk1_rst_n and clk2_rst_n).",
+      "test_ids": [
+        "T-014"
+      ],
+      "testcases": [
+        "test_reset_initialization"
+      ],
+      "tb_signals": [
+        "a_reg",
+        "have_a",
+        "hold_valid",
+        "hold_word",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "a_reg",
+        "have_a",
+        "hold_valid",
+        "hold_word",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-006",
+      "requirement": "The module shall initialize all state registers to 0 after reset completion.",
+      "test_ids": [
+        "T-014"
+      ],
+      "testcases": [
+        "test_reset_initialization"
+      ],
+      "tb_signals": [
+        "a_reg",
+        "have_a",
+        "hold_valid",
+        "hold_word",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "a_reg",
+        "have_a",
+        "hold_valid",
+        "hold_word",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-007",
+      "requirement": "The module shall abort all in-flight operations immediately upon reset assertion and discard all partial packets in the pack buffer.",
+      "test_ids": [
+        "T-015"
+      ],
+      "testcases": [
+        "test_reset_during_active_transfer"
+      ],
+      "tb_signals": [
+        "a_reg",
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "clk2_rst_n",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid",
+        "hold_word",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "a_reg",
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "clk2_rst_n",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid",
+        "hold_word",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-008",
+      "requirement": "The module shall assert clk1_ready when have_a=0 (can accept first beat regardless of FIFO state).",
+      "test_ids": [
+        "T-001"
+      ],
+      "testcases": [
+        "test_input_ready_behavior"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-009",
+      "requirement": "The module shall deassert clk1_ready when hold_valid=1 and have_a=1 (cannot accept second beat when hold buffer is occupied).",
+      "test_ids": [
+        "T-001"
+      ],
+      "testcases": [
+        "test_input_ready_behavior"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-010",
+      "requirement": "The module shall store the first beat in a_reg and set have_a=1 when a beat is accepted while have_a=0.",
+      "test_ids": [
+        "T-002"
+      ],
+      "testcases": [
+        "test_first_beat_storage"
+      ],
+      "tb_signals": [
+        "a_reg",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "data_in",
+        "data_in_valid",
+        "have_a"
+      ],
+      "rtl_signals": [
+        "a_reg",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "data_in",
+        "data_in_valid",
+        "have_a"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-011",
+      "requirement": "The module shall pack the current beat with the stored beat from a_reg when a beat is accepted while have_a=1.",
+      "test_ids": [
+        "T-003"
+      ],
+      "testcases": [
+        "test_packing_both_orders"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-012",
+      "requirement": "The module shall write the packed word to the FIFO when af_wr_ready is asserted.",
+      "test_ids": [
+        "T-004"
+      ],
+      "testcases": [
+        "test_fifo_write_when_ready"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-013",
+      "requirement": "The module shall store the packed word in hold_word and set hold_valid=1 when af_wr_ready is deasserted at pack completion.",
+      "test_ids": [
+        "T-005"
+      ],
+      "testcases": [
+        "test_hold_buffer_on_fifo_backpressure"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "hold_valid",
+        "hold_word"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "hold_valid",
+        "hold_word"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-014",
+      "requirement": "The module shall attempt to write hold_word to the FIFO in subsequent cycles when hold_valid=1.",
+      "test_ids": [
+        "T-006"
+      ],
+      "testcases": [
+        "test_hold_buffer_retry"
+      ],
+      "tb_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-015",
+      "requirement": "The module shall assert af_wr_ready when the FIFO has space available.",
+      "test_ids": [
+        "T-004"
+      ],
+      "testcases": [
+        "test_fifo_write_when_ready"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-016",
+      "requirement": "The module shall load data from the FIFO into out_data_reg and assert out_valid_reg when af_rd_valid is asserted and out_valid_reg=0.",
+      "test_ids": [
+        "T-007"
+      ],
+      "testcases": [
+        "test_fifo_read_to_output"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out",
+        "data_out_valid",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out",
+        "data_out_valid",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-017",
+      "requirement": "The module shall maintain data_out unchanged during backpressure when data_out_valid=1 and clk2_ready=0.",
+      "test_ids": [
+        "T-008"
+      ],
+      "testcases": [
+        "test_output_stability_during_backpressure"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-018",
+      "requirement": "The module shall assert af_rd_ready when out_valid_reg=0 or when out_valid_reg=1 and clk2_ready=1.",
+      "test_ids": [
+        "T-009"
+      ],
+      "testcases": [
+        "test_fifo_read_ready_calculation"
+      ],
+      "tb_signals": [
+        "af_rd_ready",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "af_rd_ready",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-019",
+      "requirement": "The module shall clear out_valid_reg=0 when out_valid_reg=1, clk2_ready=1, and no new data is available from the FIFO.",
+      "test_ids": [
+        "T-010"
+      ],
+      "testcases": [
+        "test_output_register_clear"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-020",
+      "requirement": "The module shall preserve the have_a=1 state through clk2 domain backpressure conditions.",
+      "test_ids": [
+        "T-011"
+      ],
+      "testcases": [
+        "test_partial_packet_state_persistence"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-021",
+      "requirement": "The module shall support full-rate input transfer at 100 MHz/50 MHz clock configuration with clk2_ready=1 for sustained periods of at least 1000 cycles without data loss.",
+      "test_ids": [
+        "T-012"
+      ],
+      "testcases": [
+        "test_sustained_full_rate_transfer"
+      ],
+      "tb_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-022",
+      "requirement": "The module shall prevent FIFO overflow through clk1_ready backpressure when hold_valid=1 and have_a=1.",
+      "test_ids": [
+        "T-013"
+      ],
+      "testcases": [
+        "test_overflow_protection"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    },
+    {
+      "req_id": "REQ-023",
+      "requirement": "The drain procedure shall complete when all input data is processed, out_valid_reg=0, and the FIFO read valid signal is deasserted.",
+      "test_ids": [
+        "T-016"
+      ],
+      "testcases": [
+        "test_drain_completion"
+      ],
+      "tb_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "missing_test_impl": [],
+      "status": "OK"
+    }
+  ],
+  "testcases": [
+    {
+      "test_id": "T-001",
+      "testcase": "test_input_ready_behavior",
+      "req_ids": [
+        "REQ-001",
+        "REQ-008",
+        "REQ-009"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-002",
+      "testcase": "test_first_beat_storage",
+      "req_ids": [
+        "REQ-010"
+      ],
+      "tb_signals": [
+        "a_reg",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "data_in",
+        "data_in_valid",
+        "have_a"
+      ],
+      "rtl_signals": [
+        "a_reg",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "data_in",
+        "data_in_valid",
+        "have_a"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-003",
+      "testcase": "test_packing_both_orders",
+      "req_ids": [
+        "REQ-011",
+        "REQ-002"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-004",
+      "testcase": "test_fifo_write_when_ready",
+      "req_ids": [
+        "REQ-012",
+        "REQ-015"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "hold_valid"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-005",
+      "testcase": "test_hold_buffer_on_fifo_backpressure",
+      "req_ids": [
+        "REQ-013"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "hold_valid",
+        "hold_word"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "hold_valid",
+        "hold_word"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-006",
+      "testcase": "test_hold_buffer_retry",
+      "req_ids": [
+        "REQ-014"
+      ],
+      "tb_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-007",
+      "testcase": "test_fifo_read_to_output",
+      "req_ids": [
+        "REQ-016"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out",
+        "data_out_valid",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out",
+        "data_out_valid",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-008",
+      "testcase": "test_output_stability_during_backpressure",
+      "req_ids": [
+        "REQ-017"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-009",
+      "testcase": "test_fifo_read_ready_calculation",
+      "req_ids": [
+        "REQ-018"
+      ],
+      "tb_signals": [
+        "af_rd_ready",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "af_rd_ready",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-010",
+      "testcase": "test_output_register_clear",
+      "req_ids": [
+        "REQ-019"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "out_valid_reg"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-011",
+      "testcase": "test_partial_packet_state_persistence",
+      "req_ids": [
+        "REQ-020"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-012",
+      "testcase": "test_sustained_full_rate_transfer",
+      "req_ids": [
+        "REQ-003",
+        "REQ-004",
+        "REQ-021"
+      ],
+      "tb_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-013",
+      "testcase": "test_overflow_protection",
+      "req_ids": [
+        "REQ-022"
+      ],
+      "tb_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-014",
+      "testcase": "test_reset_initialization",
+      "req_ids": [
+        "REQ-005",
+        "REQ-006"
+      ],
+      "tb_signals": [
+        "a_reg",
+        "have_a",
+        "hold_valid",
+        "hold_word",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "a_reg",
+        "have_a",
+        "hold_valid",
+        "hold_word",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-015",
+      "testcase": "test_reset_during_active_transfer",
+      "req_ids": [
+        "REQ-007"
+      ],
+      "tb_signals": [
+        "a_reg",
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "clk2_rst_n",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid",
+        "hold_word",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "rtl_signals": [
+        "a_reg",
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "clk2_rst_n",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid",
+        "hold_word",
+        "out_data_reg",
+        "out_valid_reg"
+      ],
+      "implemented": true
+    },
+    {
+      "test_id": "T-016",
+      "testcase": "test_drain_completion",
+      "req_ids": [
+        "REQ-023"
+      ],
+      "tb_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "rtl_signals": [
+        "af_rd_valid",
+        "clk1",
+        "clk1_ready",
+        "clk1_rst_n",
+        "clk2",
+        "clk2_ready",
+        "data_in",
+        "data_in_valid",
+        "data_out_valid",
+        "have_a",
+        "hold_valid"
+      ],
+      "implemented": true
+    }
+  ],
+  "debug_signal_map": {}
+}
